@@ -17,9 +17,51 @@
   --selection-accent: #FC5E58; /* Coral Red active tab color */
   --icon-default: #403D3B; /* Dark grey for default icons */
 
+  /* Tooltip / overlay */
+  --tooltip-bg: #333333;
+  --tooltip-text: #FFFFFF;
+  --overlay-bg: rgba(0, 0, 0, 0.4);
+
+  /* Interactive states */
+  --focus-border: var(--text-link);
+  --input-bg: #FFFFFF;
+
+  /* Credit rating states */
+  --credit-warning-bg: rgba(252, 94, 88, 0.15);
+  --credit-info-bg: rgba(90, 0, 50, 0.1);
+  --credit-info-bg-light: rgba(90, 0, 50, 0.05);
+  --credit-danger-bg: rgba(252, 94, 88, 0.1);
+
+  /* Shadows */
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 12px 32px rgba(0, 0, 0, 0.15);
+  --shadow-tooltip: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
   /* Typography */
   --font-family-display: 'Strawberry Sans Display', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-family-body: 'Strawberry Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+
+  --line-height-sm: 16px;
+  --line-height-base: 20px;
+  --line-height-md: 24px;
+  --line-height-lg: 32px;
 
   /* Layout and Spacing */
   --sidebar-width: 80px;
@@ -27,6 +69,13 @@
   --card-padding: 32px;
   --card-radius: 8px;
   --badge-radius: 24px;
+
+  --content-width: 1392px;
+  --content-container-width: 1432px;
+  --grid-column-width: 320px;
+  --select-height: 40px;
+  --input-height: 40px;
+  --dropdown-width: 240px;
 }
 
 /* Base Styles */
@@ -674,8 +723,8 @@ body {
   bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #333333;
-  color: #FFFFFF;
+  background-color: var(--tooltip-bg);
+  color: var(--tooltip-text);
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 11px;
@@ -684,7 +733,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow-tooltip);
   z-index: 10;
 }
 
@@ -908,4 +957,586 @@ body {
   .nav-link {
     transition: none !important;
   }
+}
+
+/* Guided Workflow Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-bg);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background-color: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-modal);
+  width: 480px;
+  max-width: 90%;
+  padding: var(--card-padding);
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+
+.modal-overlay.show .modal-card {
+  transform: translateY(0);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.modal-close-btn:hover {
+  background-color: var(--varm-grey);
+  color: var(--text-primary);
+}
+
+.modal-close-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.modal-title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
+  padding-right: 24px;
+}
+
+.modal-subtitle {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.modal-body-text {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.modal-step-section {
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: var(--space-md);
+  background-color: var(--varm-grey);
+  margin-bottom: var(--space-lg);
+}
+
+.rating-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-base);
+}
+
+.rating-row:last-child {
+  margin-bottom: 0;
+}
+
+.rating-label {
+  color: var(--text-secondary);
+}
+
+.rating-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modal-checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: var(--space-lg);
+  cursor: pointer;
+  user-select: none;
+}
+
+.modal-checkbox-group input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--text-link);
+  margin-top: 1px;
+  cursor: pointer;
+}
+
+.modal-checkbox-label {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-primary);
+}
+
+.modal-alert-box {
+  background-color: var(--credit-danger-bg);
+  border-left: 3px solid var(--selection-accent);
+  padding: 12px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 20px;
+}
+
+.modal-alert-text {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--selection-accent);
+  font-weight: 500;
+}
+
+.modal-info-box {
+  background-color: var(--credit-info-bg-light);
+  border-left: 3px solid var(--text-link);
+  padding: 12px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 20px;
+}
+
+.modal-info-text {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-link);
+  font-weight: 500;
+}
+
+.modal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.modal-form-group label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.modal-input-select, .modal-input-date {
+  width: 100%;
+  height: var(--select-height);
+  padding: 0 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  outline: none;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+}
+
+.modal-input-select:focus, .modal-input-date:focus {
+  border-color: var(--text-link);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-btn {
+  height: var(--input-height);
+  padding: 0 20px;
+  border-radius: 6px;
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, opacity 0.2s;
+  border: none;
+}
+
+.modal-btn-secondary {
+  background-color: var(--varm-grey);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+
+.modal-btn-secondary:hover {
+  background-color: var(--border-light);
+}
+
+.modal-btn-primary {
+  background-color: var(--text-link);
+  color: #FFFFFF;
+}
+
+.modal-btn-primary:hover {
+  opacity: 0.9;
+}
+
+.modal-btn-primary:disabled, .modal-btn-secondary:disabled {
+  background-color: var(--border-medium);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.modal-btn-danger {
+  background-color: var(--selection-accent);
+  color: #FFFFFF;
+}
+
+.modal-btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* Floating Demo Panel styles */
+.demo-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 280px;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-popover);
+  z-index: 999;
+  padding: var(--space-md);
+  font-family: var(--font-family-body);
+  transition: transform 0.3s ease;
+}
+
+.demo-panel.collapsed {
+  transform: translateY(calc(100% - 44px));
+}
+
+.demo-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 8px;
+}
+
+.demo-panel-header h3 {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--text-link);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.demo-panel-toggle-icon {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.demo-form-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.demo-form-group label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.demo-select {
+  height: 28px;
+  font-size: var(--font-size-sm);
+  border-radius: 4px;
+  border: 1px solid var(--border-medium);
+  outline: none;
+  width: 100%;
+}
+
+.demo-btn {
+  width: 100%;
+  height: 32px;
+  border-radius: 4px;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  background-color: var(--text-link);
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.demo-btn:hover {
+  opacity: 0.9;
+}
+
+.demo-btn-secondary {
+  background-color: var(--varm-grey);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+
+.demo-btn-secondary:hover {
+  background-color: var(--border-light);
+}
+
+.teaser-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+
+.teaser-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-dropdown);
+}
+
+.teaser-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.teaser-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.teaser-icon-container {
+  width: 40px;
+  height: 40px;
+  background-color: var(--varm-grey);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-link);
+}
+
+.teaser-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.teaser-title {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.teaser-details-row {
+  display: flex;
+  gap: 24px;
+}
+
+.teaser-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.teaser-detail-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.teaser-detail-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* More info collapsible styling */
+.more-info-details {
+  width: 100%;
+}
+
+.more-info-summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 16px 0;
+  user-select: none;
+}
+
+.more-info-summary::-webkit-details-marker {
+  display: none;
+}
+
+.more-info-summary:hover {
+  color: var(--text-primary);
+}
+
+.more-info-chevron {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.more-info-details[open] .more-info-chevron {
+  transform: rotate(180deg);
+}
+
+/* Custom Calendar Popover styles */
+.calendar-popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-width: 320px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  box-shadow: var(--shadow-popover);
+  z-index: 1010;
+  padding: 16px;
+  margin-top: 4px;
+  user-select: none;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-month-year {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.calendar-nav-btn {
+  background: none;
+  border: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.calendar-nav-btn:hover {
+  background-color: var(--varm-grey);
+  color: var(--text-primary);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--text-primary);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.calendar-day:hover:not(.empty):not(.selected) {
+  background-color: var(--selection-bg);
+  color: var(--selection-accent);
+}
+
+.calendar-day.selected {
+  background-color: var(--text-link);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.calendar-day.today:not(.selected) {
+  border: 1px solid var(--text-link);
+  font-weight: 600;
+}
+
+.calendar-day.empty {
+  color: var(--border-medium);
+  cursor: default;
+}
+
+/* Validation Error States */
+.input-error {
+  border-color: var(--selection-accent) !important;
+  background-color: rgba(252, 94, 88, 0.03);
+}
+
+.error-message {
+  color: var(--selection-accent);
+  font-size: var(--font-size-sm);
+  margin-top: 4px;
+  font-weight: 500;
+  display: none;
 }
