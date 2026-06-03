@@ -163,7 +163,7 @@ export function PaymentTermsModal({
             <div className="modal-subtitle">Central agreement</div>
             <div className="modal-body-text">
               ${isCentralAgreement 
-                ? html`The customer is covered by a central agreement which dictates what payment terms are available. <br/><span style="display:block; margin-top: 8px; font-weight: 500; color: var(--text-link);">For questions or requests for other payment terms, <a href="#" class="brand-link">contact Sales</a>.</span>`
+                ? html`The customer is covered by a central agreement which dictates what payment terms are available. <br/><span style="display:block; margin-top: 8px; font-weight: 500; color: var(--text-link);">For questions or requests for other payment terms, <a href="#" className="brand-link">contact Sales</a>.</span>`
                 : 'No central agreement available. Selecting standalone payment terms.'
               }
             </div>
