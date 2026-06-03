@@ -468,8 +468,9 @@ body {
 
 /* Grid Layout for Details Card */
 .card-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 320px); /* exact 320px column width */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 16px; /* Figma column gaps: 16px */
 }
 
@@ -477,6 +478,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 32px; /* Figma vertical spacing between field slots */
+  width: 320px; /* exact 320px column width */
+  flex-shrink: 0;
 }
 
 /* Field Layout (Label on top, value below) */
@@ -543,13 +546,15 @@ body {
 
 /* Card Footer Fields (Special Terms, Description) */
 .card-footer-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 16px; /* Figma gap: 16px */
 }
 
-.full-width {
-  grid-column: span 1;
+.card-footer-fields > .details-field {
+  flex: 1 1 0px;
+  min-width: 320px;
 }
 
 /* Inline Edit Button (pencil mask based) */
@@ -645,14 +650,17 @@ body {
 
 /* Two-column layout inside Payment section */
 .payment-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 48px;
 }
 
 .payment-column {
   display: flex;
   flex-direction: column;
+  flex: 1 1 0px;
+  min-width: 320px;
 }
 
 /* Payment row elements representing list fields */
@@ -798,16 +806,19 @@ body {
 }
 
 .filter-inputs {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 24px;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1 1 0px;
+  min-width: 180px;
 }
 
 .filter-label {
@@ -1478,8 +1489,8 @@ body {
 }
 
 .calendar-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: flex;
+  flex-direction: row;
   text-align: center;
   font-size: var(--font-size-xs);
   font-weight: 600;
@@ -1488,10 +1499,20 @@ body {
   text-transform: uppercase;
 }
 
+.calendar-weekdays > span {
+  flex: 1 1 0px;
+}
+
 .calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 4px;
+}
+
+.calendar-days > .calendar-day {
+  width: calc((100% - 24px) / 7); /* 7 columns, 6 gaps of 4px each */
+  box-sizing: border-box;
 }
 
 .calendar-day {
