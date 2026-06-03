@@ -3,38 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Strawberry Portal - Contract Details</title>
+  <title>Strawberry Portal - Contract & Company Details</title>
   <!-- Google Fonts for premium typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <div id="app"></div>
-  <script>
-    window.onerror = function(message, source, lineno, colno, error) {
-      const div = document.createElement('div');
-      div.id = 'error-overlay';
-      div.style.position = 'fixed';
-      div.style.top = '0';
-      div.style.left = '0';
-      div.style.width = '100%';
-      div.style.height = '100%';
-      div.style.backgroundColor = 'white';
-      div.style.color = 'red';
-      div.style.padding = '20px';
-      div.style.zIndex = '999999';
-      div.style.fontFamily = 'monospace';
-      div.style.whiteSpace = 'pre-wrap';
-      div.innerText = 'JS Error: ' + message + '\nSource: ' + source + '\nLine: ' + lineno + '\nCol: ' + colno + '\nStack:\n' + (error ? error.stack : 'No stack');
-      document.body.appendChild(div);
-    };
-  </script>
-  <script type="module">
-    import { render, html } from './components/lib.js';
-    import { App } from './components/App.js';
-    render(html`<${App} />`, document.getElementById('app'));
-  </script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
