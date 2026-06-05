@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "source": "Figma — Strawberry Portal",
+    "figmaFileKey": "KP2YfQWZ7kQc4MpWVbHcBn",
+    "lastSynced": "2025-06-05",
+    "description": "Design tokens mapped from Figma Foundations to CSS custom properties in index.css :root"
+  },
+  "color": {
+    "background": {
+      "--varm-grey": { "value": "#F7F5F3", "figmaName": "Varm Grey / Background", "usage": "Page background, hover states" },
+      "--card-bg": { "value": "#FFFFFF", "figmaName": "White", "usage": "Card and panel backgrounds" }
+    },
+    "text": {
+      "--text-primary": { "value": "#000000", "figmaName": "Text/Primary", "usage": "Headings, body text, primary content" },
+      "--text-secondary": { "value": "#71706F", "figmaName": "Text/Secondary", "usage": "Labels, helper text, inactive icons" },
+      "--text-link": { "value": "#5A0032", "figmaName": "Strawberry Burgundy", "usage": "Links, interactive elements, brand accent" }
+    },
+    "border": {
+      "--border-light": { "value": "#EBE9E7", "figmaName": "Border/Light", "usage": "Subtle dividers, row separators, tooltip background" },
+      "--border-medium": { "value": "#D8D4D0", "figmaName": "Border/Medium", "usage": "Input borders, card dividers" }
+    },
+    "selection": {
+      "--selection-bg": { "value": "#FDF0EF", "figmaName": "Selection/Background", "usage": "Active tab background, selected row" },
+      "--selection-accent": { "value": "#FC5E58", "figmaName": "Coral Red", "usage": "Active tab icon, warning accents" }
+    },
+    "icon": {
+      "--icon-default": { "value": "#403D3B", "figmaName": "Icon/Default", "usage": "Default icon fill color" }
+    },
+    "status": {
+      "--status-green-bg": { "value": "rgba(45, 133, 65, 0.15)", "figmaName": "Status/Green Background", "usage": "Active status badge background" },
+      "--status-green-text": { "value": "#2D8541", "figmaName": "Status/Green Text", "usage": "Active status badge text" }
+    },
+    "tooltip": {
+      "--tooltip-bg": { "value": "#EBE9E7", "figmaName": "Tooltip/Background", "figmaNodeId": "3441:55723", "usage": "Tooltip body background (Figma fill_ULL0JP)" },
+      "--tooltip-text": { "value": "#000000", "figmaName": "Tooltip/Text", "figmaNodeId": "3441:55723", "usage": "Tooltip body text color" }
+    },
+    "overlay": {
+      "--overlay-bg": { "value": "rgba(0, 0, 0, 0.4)", "figmaName": "Overlay", "usage": "Modal backdrop" }
+    },
+    "search": {
+      "--search-bg": { "value": "#F2EBEF", "figmaName": "Search/Background", "usage": "Search input background" }
+    },
+    "credit": {
+      "--credit-warning-bg": { "value": "rgba(252, 94, 88, 0.15)", "figmaName": "Credit/Warning", "usage": "Credit rating warning background" },
+      "--credit-info-bg": { "value": "rgba(90, 0, 50, 0.1)", "figmaName": "Credit/Info", "usage": "Credit rating info background" },
+      "--credit-danger-bg": { "value": "rgba(252, 94, 88, 0.1)", "figmaName": "Credit/Danger", "usage": "Alert box background" }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "--font-family-display": {
+        "value": "'Strawberry Sans Display', 'Outfit', sans-serif",
+        "figmaName": "Strawberry Sans Display",
+        "usage": "Headings, section titles, page titles"
+      },
+      "--font-family-body": {
+        "value": "'Strawberry Sans Text', 'Inter', sans-serif",
+        "figmaName": "Strawberry Sans Text",
+        "figmaStyle": "style_973LFZ",
+        "usage": "Body text, labels, tooltips, form fields"
+      }
+    },
+    "fontSize": {
+      "--font-size-xs": { "value": "11px", "figmaName": "text/xs", "usage": "Tiny annotations" },
+      "--font-size-sm": { "value": "12px", "figmaName": "text/sm", "usage": "Field labels, filter labels" },
+      "--font-size-base": { "value": "14px", "figmaName": "paragraph/sm", "usage": "Body text, tooltip text, table cells" },
+      "--font-size-md": { "value": "16px", "figmaName": "paragraph/md", "usage": "Field values, input text" },
+      "--font-size-lg": { "value": "20px", "figmaName": "heading/md", "usage": "Section headers (h2)" },
+      "--font-size-xl": { "value": "24px", "figmaName": "heading/lg", "usage": "Page title (h1)" }
+    },
+    "lineHeight": {
+      "--line-height-sm": { "value": "16px", "figmaName": "line-height/sm" },
+      "--line-height-base": { "value": "20px", "figmaName": "line-height/base" },
+      "--line-height-md": { "value": "24px", "figmaName": "line-height/md" },
+      "--line-height-lg": { "value": "32px", "figmaName": "line-height/lg" }
+    }
+  },
+  "spacing": {
+    "--space-xs": { "value": "4px", "figmaName": "4" },
+    "--space-sm": { "value": "8px", "figmaName": "8" },
+    "--space-md": { "value": "16px", "figmaName": "16" },
+    "--space-lg": { "value": "24px", "figmaName": "24" },
+    "--space-xl": { "value": "32px", "figmaName": "32" },
+    "--space-2xl": { "value": "48px", "figmaName": "48" }
+  },
+  "layout": {
+    "--sidebar-width": { "value": "80px", "figmaName": "Sidebar Width" },
+    "--header-height": { "value": "80px", "figmaName": "Header Height" },
+    "--card-padding": { "value": "32px", "figmaName": "Card Padding" },
+    "--card-radius": { "value": "8px", "figmaName": "Card Border Radius" },
+    "--badge-radius": { "value": "24px", "figmaName": "Badge Border Radius" },
+    "--content-width": { "value": "1392px", "figmaName": "Content Width" },
+    "--grid-column-width": { "value": "320px", "figmaName": "Grid Column Width" },
+    "--select-height": { "value": "40px", "figmaName": "Select/Input Height" }
+  },
+  "shadows": {
+    "--shadow-card": { "value": "0 1px 4px rgba(0, 0, 0, 0.04)", "figmaName": "Shadow/Card", "usage": "Card elevation" },
+    "--shadow-dropdown": { "value": "0 4px 12px rgba(0, 0, 0, 0.08)", "figmaName": "Shadow/Dropdown", "usage": "Dropdown menus" },
+    "--shadow-modal": { "value": "0 12px 32px rgba(0, 0, 0, 0.15)", "figmaName": "Shadow/Modal", "usage": "Modal dialogs" },
+    "--shadow-tooltip": { "value": "0 2px 8px rgba(0, 0, 0, 0.15)", "figmaName": "Shadow/Tooltip", "usage": "Tooltip popups" },
+    "--shadow-popover": { "value": "0 8px 24px rgba(0, 0, 0, 0.12)", "figmaName": "Shadow/Popover", "usage": "Popover panels" }
+  },
+  "componentMapping": {
+    "InfoBubble": {
+      "figmaNodeId": "96:19177",
+      "figmaComponentName": "alert / info",
+      "codeFile": "src/components/shared/InfoBubble.jsx",
+      "codeConnectFile": "src/components/shared/InfoBubble.figma.jsx"
+    },
+    "Tooltip": {
+      "figmaNodeId": "3441:55723",
+      "figmaComponentName": "Tooltip",
+      "codeFile": "src/components/shared/InfoBubble.jsx (rendered inside)",
+      "notes": "Tooltip is rendered as a child span inside InfoBubble, styled via .info-bubble .tooltip CSS"
+    },
+    "StatusBadge": {
+      "figmaNodeId": "6:3037",
+      "figmaComponentName": "Badge",
+      "codeFile": "src/components/shared/StatusBadge.jsx",
+      "codeConnectFile": "src/components/shared/StatusBadge.figma.jsx"
+    },
+    "Card": {
+      "figmaNodeId": "6:3041",
+      "figmaComponentName": "Card",
+      "codeFile": "src/components/shared/Card.jsx",
+      "codeConnectFile": "src/components/shared/Card.figma.jsx"
+    },
+    "DetailsField": {
+      "figmaNodeId": "6:3038",
+      "figmaComponentName": "Inputs",
+      "codeFile": "src/components/shared/DetailsField.jsx",
+      "codeConnectFile": "src/components/shared/DetailsField.figma.jsx"
+    },
+    "CustomSelect": {
+      "figmaNodeId": "6:3039",
+      "figmaComponentName": "Dropdowns",
+      "codeFile": "src/components/shared/CustomSelect.jsx",
+      "codeConnectFile": "src/components/shared/CustomSelect.figma.jsx"
+    }
+  }
+}
