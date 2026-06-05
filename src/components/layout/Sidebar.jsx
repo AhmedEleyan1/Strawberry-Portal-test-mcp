@@ -3,11 +3,16 @@ import { Icon } from '../shared/Icon';
 import { useNavigation } from '../../App';
 
 export function Sidebar() {
-  const { setView } = useNavigation();
+  const { view, setView } = useNavigation();
 
   const handleCompaniesClick = (e) => {
     e.preventDefault();
     setView('company');
+  };
+
+  const handleDashboardClick = (e) => {
+    e.preventDefault();
+    setView('dashboard');
   };
 
   return (
@@ -15,7 +20,7 @@ export function Sidebar() {
       <div className="sidebar-top">
         <ul className="nav-links">
           <li>
-            <a href="#" className="nav-link" title="Dashboard">
+            <a href="#" onClick={handleDashboardClick} className={`nav-link ${view === 'dashboard' ? 'active' : ''}`} title="Dashboard" aria-current={view === 'dashboard' ? 'page' : undefined}>
               <Icon name="dashboard" className="nav-icon" />
             </a>
           </li>
@@ -35,7 +40,7 @@ export function Sidebar() {
             </a>
           </li>
           <li>
-            <a href="#" onClick={handleCompaniesClick} className="nav-link active" title="Companies" aria-current="page">
+            <a href="#" onClick={handleCompaniesClick} className={`nav-link ${view === 'company' || view === 'contract' ? 'active' : ''}`} title="Companies" aria-current={view === 'company' ? 'page' : undefined}>
               <Icon name="companies" className="nav-icon" />
             </a>
           </li>

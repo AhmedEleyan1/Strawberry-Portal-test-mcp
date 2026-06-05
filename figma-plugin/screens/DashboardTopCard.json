@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "source": "src/components/dashboard/DashboardTopCard.jsx",
+    "generatedAt": "2026-06-05T21:00:00.000Z",
+    "component": "DashboardTopCard",
+    "description": "Top summary card with 4 stats: Arrivals, Departures, Stayovers, In-stay Visits. Each stat has a label, count, icon, optional progress bar, and subtitle. Bottom row has extras."
+  },
+  "sections": [
+    {
+      "type": "top-stats-card",
+      "layout": "horizontal-4col",
+      "stats": [
+        {
+          "label": "Arrivals",
+          "count": "22",
+          "icon": "check-in",
+          "iconColor": "#2D8541",
+          "iconBg": "rgba(45,133,65,0.1)",
+          "progressColor": "#2D8541",
+          "progressPercent": 50,
+          "subtitle": "22 of 44 remaining"
+        },
+        {
+          "label": "Departures",
+          "count": "44",
+          "icon": "check-out",
+          "iconColor": "#C52924",
+          "iconBg": "rgba(197,41,36,0.1)",
+          "progressColor": "#C52924",
+          "progressPercent": 58,
+          "subtitle": "32 of 76 remaining"
+        },
+        {
+          "label": "Stayovers",
+          "count": "192",
+          "icon": "stayover",
+          "iconColor": "#5A0032",
+          "iconBg": "rgba(90,0,50,0.1)",
+          "subtitle": "Enjoying their stay"
+        },
+        {
+          "label": "In-stay Visits",
+          "count": "38",
+          "icon": "in-stay",
+          "iconColor": "#3B82F6",
+          "iconBg": "rgba(59,130,246,0.1)",
+          "progressColor": "#3B82F6",
+          "progressPercent": 73,
+          "subtitle": "14 of 52 remaining"
+        }
+      ],
+      "extras": [
+        { "label": "Early check ins", "value": "22", "position": "left" },
+        { "label": "Late check outs", "value": "13", "position": "left" },
+        { "label": "No Show to process", "value": "4", "type": "badge", "position": "right" }
+      ]
+    }
+  ]
+}
