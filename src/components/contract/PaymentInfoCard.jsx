@@ -1,18 +1,17 @@
 import React from 'react';
 import { Card } from '../shared/Card';
 import { DetailsField } from '../shared/DetailsField';
+import { SectionHeader } from '../shared/SectionHeader';
 
 export function PaymentInfoCard({ fields }) {
   return (
-    <Card className="payment-card" aria-label="Payment Information">
-      <div className="section-header">
-        <h2>Payment Information</h2>
-      </div>
-      
-      <div className="section-content-wrapper">
-        <div className="payment-grid">
-          {/* Column 1 — Payment & Terms */}
-          <div className="payment-column">
+    <section className="payment-section" aria-labelledby="payment-heading">
+      <SectionHeader id="payment-heading" title="Payment Information" />
+
+      <Card className="details-card" aria-label="Payment Information">
+        <div className="card-grid">
+          {/* Column 1 */}
+          <div className="grid-column">
             <DetailsField
               id="payment_type"
               label="Payment Type"
@@ -22,7 +21,6 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Determines the method by which the client will settle billing amounts. Synced from Salesforce."
               tooltipPosition="right"
-              className="payment-row-item"
             />
             <DetailsField
               id="contracted_payment_terms"
@@ -33,7 +31,6 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
             />
             <DetailsField
               id="contracted_invoice_fee"
@@ -44,34 +41,11 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
-            />
-            <DetailsField
-              id="other_payment_details"
-              label="Other Payment Details"
-              value={fields.other_payment_details}
-              fieldType="text"
-              editable={false}
-              hasInfo={true}
-              infoText="Specific notes regarding custom payment arrangements. Synced from Salesforce."
-              tooltipPosition="right"
-              className="payment-row-item"
-            />
-            <DetailsField
-              id="inherit_options"
-              label="Inherit Options"
-              value={fields.inherit_options}
-              fieldType="select"
-              editable={false}
-              hasInfo={true}
-              infoText="Defines if payment conditions should be inherited from parent account. Synced from Salesforce."
-              tooltipPosition="right"
-              className="payment-row-item"
             />
           </div>
 
-          {/* Column 2 — Invoicing Details */}
-          <div className="payment-column">
+          {/* Column 2 */}
+          <div className="grid-column">
             <DetailsField
               id="invoice_conditions"
               label="Invoice Conditions"
@@ -81,7 +55,6 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Under what conditions is the creation of invoices allowed. Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
             />
             <DetailsField
               id="invoice_frequency"
@@ -92,7 +65,6 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Determines how often invoice cycles are generated automatically. Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
             />
             <DetailsField
               id="invoice_reference"
@@ -103,8 +75,11 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Mandatory customer PO or reference number required on invoices. Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
             />
+          </div>
+
+          {/* Column 3 */}
+          <div className="grid-column">
             <DetailsField
               id="to_be_invoiced"
               label="To be Invoiced"
@@ -114,7 +89,6 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="Determines which legal entity must receive the invoices. Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
             />
             <DetailsField
               id="account_detail_to_invoice"
@@ -126,11 +100,34 @@ export function PaymentInfoCard({ fields }) {
               hasInfo={true}
               infoText="The specific account entity linked for billing. Synced from Salesforce."
               tooltipPosition="top"
-              className="payment-row-item"
+            />
+            <DetailsField
+              id="other_payment_details"
+              label="Other Payment Details"
+              value={fields.other_payment_details}
+              fieldType="text"
+              editable={false}
+              hasInfo={true}
+              infoText="Specific notes regarding custom payment arrangements. Synced from Salesforce."
+              tooltipPosition="top"
+            />
+          </div>
+
+          {/* Column 4 */}
+          <div className="grid-column">
+            <DetailsField
+              id="inherit_options"
+              label="Inherit Options"
+              value={fields.inherit_options}
+              fieldType="select"
+              editable={false}
+              hasInfo={true}
+              infoText="Defines if payment conditions should be inherited from parent account. Synced from Salesforce."
+              tooltipPosition="top"
             />
           </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </section>
   );
 }
