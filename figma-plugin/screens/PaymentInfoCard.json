@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/PaymentInfoCard.jsx",
+    "generatedAt": "2026-06-05T11:03:36.235Z",
+    "component": "PaymentInfoCard"
+  },
+  "sections": [
+    {
+      "type": "section-header",
+      "title": "Payment Information"
+    },
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Payment Type",
+              "value": "{fields.payment_type}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Determines the method by which the client will settle billing amounts. Synced from Salesforce.",
+              "tooltipPosition": "right",
+              "isLink": false
+            },
+            {
+              "label": "Contracted Payment Terms",
+              "value": "{fields.contracted_payment_terms}",
+              "fieldType": "number",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Contracted Invoice Fee",
+              "value": "{fields.contracted_invoice_fee}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Invoice Conditions",
+              "value": "{fields.invoice_conditions}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Under what conditions is the creation of invoices allowed. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Invoice Frequency",
+              "value": "{fields.invoice_frequency}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Determines how often invoice cycles are generated automatically. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Invoice Reference",
+              "value": "{fields.invoice_reference}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Mandatory customer PO or reference number required on invoices. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "To be Invoiced",
+              "value": "{fields.to_be_invoiced}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Determines which legal entity must receive the invoices. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Account Detail to Invoice",
+              "value": "{fields.account_detail_to_invoice}",
+              "fieldType": "link",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "The specific account entity linked for billing. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": true
+            },
+            {
+              "label": "Other Payment Details",
+              "value": "{fields.other_payment_details}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Specific notes regarding custom payment arrangements. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Inherit Options",
+              "value": "{fields.inherit_options}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Defines if payment conditions should be inherited from parent account. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

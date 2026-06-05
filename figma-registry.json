@@ -1,0 +1,184 @@
+{
+  "meta": {
+    "figmaFileKey": "KP2YfQWZ7kQc4MpWVbHcBn",
+    "figmaFileName": "Strawberry Portal",
+    "lastUpdated": "2025-06-05",
+    "description": "Maps every React component to its Figma counterpart. Used by the screen definition generator and the universal Figma builder plugin."
+  },
+
+  "componentKeys": {
+    "infoIcon": {
+      "figmaKey": "6914f5cb9f180144235bf1c7ab814ff3bfcee8ea",
+      "figmaNodeId": "96:19177",
+      "figmaName": "alert / info",
+      "reactFile": "src/components/shared/InfoBubble.jsx",
+      "defaultSize": { "width": 20, "height": 20 }
+    },
+    "tooltip": {
+      "figmaKey": "b3d790e19b44159b6bf2950e0a34a288332ee73b",
+      "figmaNodeId": "3441:55723",
+      "figmaName": "Tooltip",
+      "reactFile": "src/components/shared/InfoBubble.jsx",
+      "variants": {
+        "top": "33d39f3d3cf15db182084dca548667fc178d46a7",
+        "right": "464d5a616eb7ce7d5de373ca8e8e17176dadb04b",
+        "bottom": "7c6713c21b6b6a83ed18a7e1553c657d19ad6731",
+        "left": "30f9471172fc8d4cf42c4f1450d566241bd02c23"
+      }
+    },
+    "tooltipButton": {
+      "figmaKey": "3efcbd4c35f4d6235e49e759c0bfb79d6828270d",
+      "figmaNodeId": "5945:46685",
+      "figmaName": "tooltip btn"
+    }
+  },
+
+  "layoutPatterns": {
+    "card-grid": {
+      "description": "4-column grid used by ContractDetailsCard, CompanyDetailsCard, PaymentInfoCard",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 16,
+      "childPattern": "grid-column"
+    },
+    "grid-column": {
+      "description": "Vertical stack of fields inside a card-grid",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 32,
+      "width": 320
+    },
+    "section": {
+      "description": "SectionHeader + Card wrapper (used by Rates, Payment Info)",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 8
+    },
+    "title-section-group": {
+      "description": "Page title + Card directly under it (used by Contract Details, Company Details)",
+      "layoutMode": "VERTICAL",
+      "itemSpacing": 16
+    },
+    "filter-bar": {
+      "description": "Horizontal row of filter selects + static displays",
+      "layoutMode": "HORIZONTAL",
+      "itemSpacing": 24
+    },
+    "data-table": {
+      "description": "Table with thead/tbody",
+      "hasHeader": true,
+      "headerBg": "varmGrey"
+    }
+  },
+
+  "elementTypes": {
+    "details-field": {
+      "description": "Label on top, value below — stacked vertically",
+      "reactComponent": "DetailsField",
+      "structure": {
+        "label": { "fontSize": 12, "fontWeight": "regular", "color": "textSecondary", "textRole": "label" },
+        "value": { "fontSize": 16, "fontWeight": "regular", "color": "textPrimary", "textRole": "body" }
+      },
+      "variants": {
+        "link": { "valueColor": "textLink", "textDecoration": "underline" },
+        "badge": { "usesComponent": "statusBadge" },
+        "withInfo": { "labelHasIcon": "infoIcon" },
+        "withAction": { "hasButton": true, "buttonColor": "textLink" }
+      }
+    },
+    "section-header": {
+      "description": "Standalone section title (h2)",
+      "reactComponent": "SectionHeader",
+      "structure": {
+        "text": { "fontSize": 20, "fontWeight": "bold", "color": "textPrimary", "textRole": "heading" }
+      }
+    },
+    "page-title": {
+      "description": "Page title (h1)",
+      "structure": {
+        "text": { "fontSize": 24, "fontWeight": "bold", "color": "textPrimary", "textRole": "heading" }
+      }
+    },
+    "card": {
+      "description": "White card container with shadow",
+      "reactComponent": "Card",
+      "structure": {
+        "padding": 32,
+        "cornerRadius": 8,
+        "fill": "cardBg",
+        "shadow": { "x": 0, "y": 1, "blur": 4, "alpha": 0.04 }
+      }
+    },
+    "status-badge": {
+      "description": "Colored status pill",
+      "reactComponent": "StatusBadge",
+      "structure": {
+        "text": { "fontSize": 12, "fontWeight": "medium" },
+        "cornerRadius": 24
+      }
+    },
+    "teaser-card": {
+      "description": "Clickable contract teaser with icon, title, details row, and status badge",
+      "reactComponent": "TeaserCard",
+      "structure": {
+        "title": { "fontSize": 16, "fontWeight": "medium", "color": "textPrimary" },
+        "detailLabel": { "fontSize": 12, "fontWeight": "regular", "color": "textSecondary" },
+        "detailValue": { "fontSize": 14, "fontWeight": "regular", "color": "textPrimary" }
+      }
+    },
+    "data-table": {
+      "description": "Table with header and body rows",
+      "reactComponent": "custom (RatesSection inline)",
+      "structure": {
+        "headerCell": { "fontSize": 12, "fontWeight": "medium", "color": "textSecondary", "bg": "varmGrey" },
+        "bodyCell": { "fontSize": 14, "fontWeight": "regular", "color": "textPrimary" }
+      }
+    },
+    "filter-group": {
+      "description": "Label + select or static value",
+      "reactComponent": "custom (RatesSection inline)",
+      "structure": {
+        "label": { "fontSize": 12, "fontWeight": "regular", "color": "textSecondary" },
+        "value": { "fontSize": 14, "fontWeight": "regular", "color": "textPrimary" }
+      }
+    },
+    "back-link": {
+      "description": "← Back to X navigation link",
+      "reactComponent": "BackLink",
+      "structure": {
+        "text": { "fontSize": 14, "fontWeight": "regular", "color": "textLink" }
+      }
+    },
+    "collapsible-section": {
+      "description": "More info expandable section with chevron",
+      "structure": {
+        "label": { "fontSize": 14, "fontWeight": "medium", "color": "textPrimary" },
+        "divider": { "color": "borderLight", "height": 1 }
+      }
+    }
+  },
+
+  "tokens": {
+    "colors": {
+      "varmGrey":      "#F7F5F3",
+      "cardBg":        "#FFFFFF",
+      "textPrimary":   "#000000",
+      "textSecondary": "#71706F",
+      "textLink":      "#5A0032",
+      "borderLight":   "#EBE9E7",
+      "borderMedium":  "#D8D4D0",
+      "selectionBg":   "#FDF0EF",
+      "selectionAccent": "#FC5E58",
+      "statusGreenBg":   "rgba(45,133,65,0.15)",
+      "statusGreenText": "#2D8541"
+    },
+    "spacing": { "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32, "xxl": 48 },
+    "layout": {
+      "sidebarWidth": 80,
+      "headerHeight": 80,
+      "cardPadding": 32,
+      "cardRadius": 8,
+      "contentWidth": 1392,
+      "gridColumnWidth": 320,
+      "gridGap": 16,
+      "fieldGap": 32
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/ContractsSection.jsx",
+    "generatedAt": "2026-06-05T11:03:36.237Z",
+    "component": "ContractsSection"
+  },
+  "sections": [
+    {
+      "type": "section-header",
+      "title": "Contracts"
+    }
+  ]
+}

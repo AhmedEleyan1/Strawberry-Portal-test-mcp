@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/RatesSection.jsx",
+    "generatedAt": "2026-06-05T11:03:36.236Z",
+    "component": "RatesSection"
+  },
+  "sections": [
+    {
+      "type": "section-header",
+      "title": "Rates"
+    },
+    {
+      "type": "data-table",
+      "headers": [
+        "Product",
+        "Rate code",
+        "Price",
+        "Discount"
+      ],
+      "sampleRows": []
+    }
+  ]
+}

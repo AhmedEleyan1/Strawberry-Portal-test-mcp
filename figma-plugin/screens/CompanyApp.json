@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/CompanyApp.jsx",
+    "generatedAt": "2026-06-05T11:03:36.240Z",
+    "component": "CompanyApp",
+    "type": "page"
+  },
+  "page": {
+    "title": "",
+    "backLink": "Back to Companies & Rates",
+    "sections": [
+      {
+        "component": "CompanyDetailsCard",
+        "type": "reference"
+      },
+      {
+        "component": "ContractsSection",
+        "type": "reference"
+      },
+      {
+        "component": "PaymentTermsModal",
+        "type": "reference"
+      }
+    ]
+  }
+}

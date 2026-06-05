@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/CompanyDetailsCard.jsx",
+    "generatedAt": "2026-06-05T11:03:36.237Z",
+    "component": "CompanyDetailsCard"
+  },
+  "sections": [
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Name",
+              "value": "{state.companyName}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Customer ID",
+              "value": "{state.customerId || '70194837'}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "National Reg. No.",
+              "value": "{state.nationalRegNo || '996340333'}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Invoicable",
+              "value": "Yes",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Synced to operational systems",
+              "value": "Yes",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Covered By Central Agreement",
+              "value": "{state.coveredByCentralAgreement}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "Credit rating",
+              "value": "–",
+              "fieldType": "badge",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Credit rating last checked",
+              "value": "{state.creditRatingLastChecked}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Invoice Conditions",
+              "value": "Continuous invoicing allowed",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Payment terms",
+              "value": "{state.paymentTerms === 'None' ? 'None' : state.paymentTerms}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Estimated invoice date",
+              "value": "{state.estimatedInvoiceDate}",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Main Contract Holder",
+              "value": "Strawberry Holding AS",
+              "fieldType": "link",
+              "editable": false,
+              "hasAction": false
+            },
+            {
+              "label": "Main Contract Number",
+              "value": "00018589",
+              "fieldType": "text",
+              "editable": false,
+              "hasAction": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "collapsible-section",
+      "label": "More info"
+    }
+  ]
+}

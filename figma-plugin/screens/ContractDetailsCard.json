@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/ContractDetailsCard.jsx",
+    "generatedAt": "2026-06-05T11:03:36.225Z",
+    "component": "ContractDetailsCard"
+  },
+  "sections": [
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Agreement type",
+              "value": "{fields.agreement_type}",
+              "fieldType": "select",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Contract type",
+              "value": "{fields.contract_type}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Number",
+              "value": "{fields.contract_number}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Duration",
+              "value": "{fields.duration}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Cancellation policy",
+              "value": "{fields.cancellation_policy}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Owner",
+              "value": "{fields.owner}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Commission",
+              "value": "{fields.commission}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false
+            },
+            {
+              "label": "Account contract owner",
+              "value": "{fields.account_owner}",
+              "fieldType": "link",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
