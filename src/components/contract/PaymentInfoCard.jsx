@@ -11,7 +11,7 @@ export function PaymentInfoCard({ fields }) {
       
       <div className="section-content-wrapper">
         <div className="payment-grid">
-          {/* Left Column (3 fields) */}
+          {/* Column 1 — Payment & Terms */}
           <div className="payment-column">
             <DetailsField
               id="payment_type"
@@ -21,50 +21,7 @@ export function PaymentInfoCard({ fields }) {
               editable={false}
               hasInfo={true}
               infoText="Determines the method by which the client will settle billing amounts. Synced from Salesforce."
-              className="payment-row-item"
-            />
-            <DetailsField
-              id="other_payment_details"
-              label="Other Payment Details"
-              value={fields.other_payment_details}
-              fieldType="text"
-              editable={false}
-              hasInfo={true}
-              infoText="Specific notes regarding custom payment arrangements. Synced from Salesforce."
-              className="payment-row-item"
-            />
-            <DetailsField
-              id="inherit_options"
-              label="Inherit Options"
-              value={fields.inherit_options}
-              fieldType="select"
-              editable={false}
-              hasInfo={true}
-              infoText="Defines if payment conditions should be inherited from parent account. Synced from Salesforce."
-              className="payment-row-item"
-            />
-          </div>
-
-          {/* Right Column (7 fields) */}
-          <div className="payment-column">
-            <DetailsField
-              id="invoice_conditions"
-              label="Invoice Conditions"
-              value={fields.invoice_conditions}
-              fieldType="select"
-              editable={false}
-              hasInfo={true}
-              infoText="Under what conditions is the creation of invoices allowed. Synced from Salesforce."
-              className="payment-row-item"
-            />
-            <DetailsField
-              id="contracted_invoice_fee"
-              label="Contracted Invoice Fee"
-              value={fields.contracted_invoice_fee}
-              fieldType="checkbox"
-              editable={false}
-              hasInfo={true}
-              infoText="Synced from Salesforce."
+              tooltipPosition="right"
               className="payment-row-item"
             />
             <DetailsField
@@ -75,6 +32,55 @@ export function PaymentInfoCard({ fields }) {
               editable={false}
               hasInfo={true}
               infoText="Synced from Salesforce."
+              tooltipPosition="top"
+              className="payment-row-item"
+            />
+            <DetailsField
+              id="contracted_invoice_fee"
+              label="Contracted Invoice Fee"
+              value={fields.contracted_invoice_fee === 'true' || fields.contracted_invoice_fee === true ? 'Yes' : 'No'}
+              fieldType="text"
+              editable={false}
+              hasInfo={true}
+              infoText="Synced from Salesforce."
+              tooltipPosition="top"
+              className="payment-row-item"
+            />
+            <DetailsField
+              id="other_payment_details"
+              label="Other Payment Details"
+              value={fields.other_payment_details}
+              fieldType="text"
+              editable={false}
+              hasInfo={true}
+              infoText="Specific notes regarding custom payment arrangements. Synced from Salesforce."
+              tooltipPosition="right"
+              className="payment-row-item"
+            />
+            <DetailsField
+              id="inherit_options"
+              label="Inherit Options"
+              value={fields.inherit_options}
+              fieldType="select"
+              editable={false}
+              hasInfo={true}
+              infoText="Defines if payment conditions should be inherited from parent account. Synced from Salesforce."
+              tooltipPosition="right"
+              className="payment-row-item"
+            />
+          </div>
+
+          {/* Column 2 — Invoicing Details */}
+          <div className="payment-column">
+            <DetailsField
+              id="invoice_conditions"
+              label="Invoice Conditions"
+              value={fields.invoice_conditions}
+              fieldType="select"
+              editable={false}
+              hasInfo={true}
+              infoText="Under what conditions is the creation of invoices allowed. Synced from Salesforce."
+              tooltipPosition="top"
               className="payment-row-item"
             />
             <DetailsField
@@ -85,6 +91,7 @@ export function PaymentInfoCard({ fields }) {
               editable={false}
               hasInfo={true}
               infoText="Determines how often invoice cycles are generated automatically. Synced from Salesforce."
+              tooltipPosition="top"
               className="payment-row-item"
             />
             <DetailsField
@@ -95,6 +102,7 @@ export function PaymentInfoCard({ fields }) {
               editable={false}
               hasInfo={true}
               infoText="Mandatory customer PO or reference number required on invoices. Synced from Salesforce."
+              tooltipPosition="top"
               className="payment-row-item"
             />
             <DetailsField
@@ -105,6 +113,7 @@ export function PaymentInfoCard({ fields }) {
               editable={false}
               hasInfo={true}
               infoText="Determines which legal entity must receive the invoices. Synced from Salesforce."
+              tooltipPosition="top"
               className="payment-row-item"
             />
             <DetailsField
@@ -116,6 +125,7 @@ export function PaymentInfoCard({ fields }) {
               editable={false}
               hasInfo={true}
               infoText="The specific account entity linked for billing. Synced from Salesforce."
+              tooltipPosition="top"
               className="payment-row-item"
             />
           </div>

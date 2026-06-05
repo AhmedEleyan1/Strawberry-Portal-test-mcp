@@ -13,6 +13,7 @@ export function DetailsField({
   linkUrl = '#',
   hasInfo = false,
   infoText = '',
+  tooltipPosition = 'top',
   className = 'details-field',
   ...props
 }) {
@@ -170,7 +171,7 @@ export function DetailsField({
     >
       <span className="field-label">
         {label}
-        {hasInfo && <InfoBubble text={infoText} />}
+        {hasInfo && <InfoBubble text={infoText} position={tooltipPosition} />}
       </span>
       
       {isEditing 
