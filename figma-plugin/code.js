@@ -255,6 +255,242 @@ async function buildDataTable(section) {
   return wrapper;
 }
 
+// Build: Top Stats Card (Arrivals, Departures, Stayovers, In-stay Visits)
+function hexToRgb(hex) {
+  hex = hex.replace("#", "");
+  return {
+    r: parseInt(hex.substring(0, 2), 16) / 255,
+    g: parseInt(hex.substring(2, 4), 16) / 255,
+    b: parseInt(hex.substring(4, 6), 16) / 255
+  };
+}
+
+async function buildTopStatsCard(section) {
+  var card = figma.createFrame();
+  card.name = "Dashboard Top Card";
+  card.layoutMode = "VERTICAL";
+  card.paddingTop = card.paddingBottom = 16;
+  card.paddingLeft = card.paddingRight = 24;
+  card.itemSpacing = 16;
+  card.primaryAxisSizingMode = "AUTO";
+  card.counterAxisSizingMode = "FIXED";
+  card.resize(TOKENS.layout.contentWidth, 300);
+  card.cornerRadius = TOKENS.layout.cardRadius;
+  card.fills = solidFill(TOKENS.colors.cardBg, "cardBg");
+  card.effects = [{ type: "DROP_SHADOW", color: { r: 0, g: 0, b: 0, a: 0.04 }, offset: { x: 0, y: 1 }, radius: 4, spread: 0, visible: true, blendMode: "NORMAL" }];
+
+  // Stats row
+  var statsRow = figma.createFrame();
+  statsRow.name = "stats-row";
+  statsRow.layoutMode = "HORIZONTAL";
+  statsRow.itemSpacing = 40;
+  statsRow.counterAxisAlignItems = "CENTER";
+  statsRow.primaryAxisSizingMode = "AUTO";
+  statsRow.counterAxisSizingMode = "AUTO";
+  statsRow.fills = [];
+
+  var stats = section.stats || [];
+  for (var i = 0; i < stats.length; i++) {
+    // Add divider between stats
+    if (i > 0) {
+      var divV = figma.createFrame();
+      divV.name = "divider-v";
+      divV.resize(1, 88);
+      divV.fills = solidFill(TOKENS.colors.borderLight, "borderLight");
+      statsRow.appendChild(divV);
+    }
+
+    var stat = stats[i];
+    var statFrame = figma.createFrame();
+    statFrame.name = "stat / " + stat.label;
+    statFrame.layoutMode = "VERTICAL";
+    statFrame.itemSpacing = 16;
+    statFrame.paddingTop = statFrame.paddingBottom = 16;
+    statFrame.paddingLeft = statFrame.paddingRight = 16;
+    statFrame.primaryAxisSizingMode = "AUTO";
+    statFrame.counterAxisSizingMode = "AUTO";
+    statFrame.fills = [];
+
+    // Header row (label+count left, icon right)
+    var headerRow = figma.createFrame();
+    headerRow.name = "stat-header";
+    headerRow.layoutMode = "HORIZONTAL";
+    headerRow.primaryAxisAlignItems = "SPACE_BETWEEN";
+    headerRow.counterAxisAlignItems = "CENTER";
+    headerRow.primaryAxisSizingMode = "FIXED";
+    headerRow.counterAxisSizingMode = "AUTO";
+    headerRow.resize(300, 60);
+    headerRow.fills = [];
+
+    // Info column (label + count)
+    var infoCol = figma.createFrame();
+    infoCol.name = "stat-info";
+    infoCol.layoutMode = "VERTICAL";
+    infoCol.itemSpacing = 8;
+    infoCol.primaryAxisSizingMode = "AUTO";
+    infoCol.counterAxisSizingMode = "AUTO";
+    infoCol.fills = [];
+
+    var labelText = await buildText(stat.label, 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "label");
+    infoCol.appendChild(labelText);
+
+    var countText = await buildText(stat.count, 32, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+    infoCol.appendChild(countText);
+
+    headerRow.appendChild(infoCol);
+
+    // Icon circle
+    var iconCircle = figma.createFrame();
+    iconCircle.name = "icon-" + stat.label.toLowerCase().replace(/\s/g, "-");
+    iconCircle.resize(40, 40);
+    iconCircle.cornerRadius = 20;
+    if (stat.iconBg) {
+      // Parse rgba
+      var bgMatch = stat.iconBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),?\s*([\d.]+)?\)/);
+      if (bgMatch) {
+        iconCircle.fills = [{ type: "SOLID", color: { r: parseInt(bgMatch[1])/255, g: parseInt(bgMatch[2])/255, b: parseInt(bgMatch[3])/255 }, opacity: parseFloat(bgMatch[4] || 1) }];
+      }
+    }
+    headerRow.appendChild(iconCircle);
+    statFrame.appendChild(headerRow);
+
+    // Progress bar (if present)
+    if (stat.progressPercent !== undefined && stat.progressColor) {
+      var progressTrack = figma.createFrame();
+      progressTrack.name = "progress-track";
+      progressTrack.resize(300, 4);
+      progressTrack.cornerRadius = 2;
+      progressTrack.fills = solidFill(TOKENS.colors.borderLight, "borderLight");
+      progressTrack.layoutMode = "HORIZONTAL";
+      progressTrack.primaryAxisSizingMode = "FIXED";
+      progressTrack.counterAxisSizingMode = "FIXED";
+
+      var progressBar = figma.createFrame();
+      progressBar.name = "progress-bar";
+      var barWidth = Math.round(300 * stat.progressPercent / 100);
+      progressBar.resize(barWidth, 4);
+      progressBar.cornerRadius = 2;
+      progressBar.fills = [{ type: "SOLID", color: hexToRgb(stat.progressColor) }];
+      progressTrack.appendChild(progressBar);
+
+      statFrame.appendChild(progressTrack);
+    }
+
+    // Subtitle
+    var subText = await buildText(stat.subtitle, 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "body");
+    statFrame.appendChild(subText);
+
+    statsRow.appendChild(statFrame);
+    statFrame.layoutSizingHorizontal = "FILL";
+  }
+
+  card.appendChild(statsRow);
+  statsRow.layoutSizingHorizontal = "FILL";
+
+  // Horizontal divider
+  var divH = figma.createFrame();
+  divH.name = "divider-h";
+  divH.resize(TOKENS.layout.contentWidth - 48, 1);
+  divH.fills = solidFill(TOKENS.colors.borderLight, "borderLight");
+  divH.layoutSizingHorizontal = "FILL";
+  card.appendChild(divH);
+
+  // Extras row
+  var extras = section.extras || [];
+  if (extras.length > 0) {
+    var extrasRow = figma.createFrame();
+    extrasRow.name = "extras-row";
+    extrasRow.layoutMode = "HORIZONTAL";
+    extrasRow.primaryAxisAlignItems = "SPACE_BETWEEN";
+    extrasRow.counterAxisAlignItems = "CENTER";
+    extrasRow.primaryAxisSizingMode = "FIXED";
+    extrasRow.counterAxisSizingMode = "AUTO";
+    extrasRow.resize(TOKENS.layout.contentWidth - 48, 32);
+    extrasRow.paddingLeft = extrasRow.paddingRight = 8;
+    extrasRow.fills = [];
+
+    // Left group
+    var leftGroup = figma.createFrame();
+    leftGroup.name = "extras-left";
+    leftGroup.layoutMode = "HORIZONTAL";
+    leftGroup.itemSpacing = 8;
+    leftGroup.counterAxisAlignItems = "CENTER";
+    leftGroup.primaryAxisSizingMode = "AUTO";
+    leftGroup.counterAxisSizingMode = "AUTO";
+    leftGroup.fills = [];
+
+    for (var e = 0; e < extras.length; e++) {
+      var ex = extras[e];
+      if (ex.position === "right") continue;
+
+      var extraItem = figma.createFrame();
+      extraItem.name = "extra-" + ex.label;
+      extraItem.layoutMode = "HORIZONTAL";
+      extraItem.itemSpacing = 8;
+      extraItem.counterAxisAlignItems = "CENTER";
+      extraItem.paddingTop = extraItem.paddingBottom = 6;
+      extraItem.paddingLeft = extraItem.paddingRight = 8;
+      extraItem.primaryAxisSizingMode = "AUTO";
+      extraItem.counterAxisSizingMode = "AUTO";
+      extraItem.fills = [];
+
+      var exLabel = await buildText(ex.label, 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "body");
+      extraItem.appendChild(exLabel);
+
+      var exValue = await buildText(ex.value, 16, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+      extraItem.appendChild(exValue);
+
+      leftGroup.appendChild(extraItem);
+    }
+    extrasRow.appendChild(leftGroup);
+
+    // Right items
+    for (var e2 = 0; e2 < extras.length; e2++) {
+      var ex2 = extras[e2];
+      if (ex2.position !== "right") continue;
+
+      var rightItem = figma.createFrame();
+      rightItem.name = "extra-" + ex2.label;
+      rightItem.layoutMode = "HORIZONTAL";
+      rightItem.itemSpacing = 8;
+      rightItem.counterAxisAlignItems = "CENTER";
+      rightItem.paddingTop = rightItem.paddingBottom = 6;
+      rightItem.paddingLeft = rightItem.paddingRight = 8;
+      rightItem.primaryAxisSizingMode = "AUTO";
+      rightItem.counterAxisSizingMode = "AUTO";
+      rightItem.fills = [];
+
+      var rLabel = await buildText(ex2.label, 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "body");
+      rightItem.appendChild(rLabel);
+
+      if (ex2.type === "badge") {
+        var badge = figma.createFrame();
+        badge.name = "badge";
+        badge.resize(24, 24);
+        badge.cornerRadius = 12;
+        badge.fills = [{ type: "SOLID", color: { r: 0.976, g: 0.851, b: 0.847 } }];
+        badge.counterAxisAlignItems = "CENTER";
+        badge.primaryAxisAlignItems = "CENTER";
+        badge.layoutMode = "HORIZONTAL";
+
+        var badgeNum = await buildText(ex2.value, 16, "Bold", { r: 0.588, g: 0, b: 0.078 }, undefined, "label");
+        badge.appendChild(badgeNum);
+        rightItem.appendChild(badge);
+      } else {
+        var rValue = await buildText(ex2.value, 16, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+        rightItem.appendChild(rValue);
+      }
+
+      extrasRow.appendChild(rightItem);
+    }
+
+    card.appendChild(extrasRow);
+    extrasRow.layoutSizingHorizontal = "FILL";
+  }
+
+  return card;
+}
+
 async function buildScreen(definition) {
   await loadFonts();
   await discoverVariables();
@@ -286,6 +522,11 @@ async function buildScreen(definition) {
     if (sec.type === "data-table") {
       var table = await buildDataTable(sec);
       root.appendChild(table);
+    }
+
+    if (sec.type === "top-stats-card") {
+      var topCard = await buildTopStatsCard(sec);
+      root.appendChild(topCard);
     }
   }
 
