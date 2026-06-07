@@ -1,0 +1,347 @@
+{
+  "$schema": "../screens/screen-definition.schema.json",
+  "meta": {
+    "type": "full-page",
+    "pageName": "contract",
+    "title": "Framework Contract — Clarion Malmö Live",
+    "generatedAt": "2026-06-07T15:07:06.276Z",
+    "screens": [
+      {
+        "name": "ContractDetailsCard",
+        "sectionCount": 1,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/ContractDetailsCard.jsx"
+      },
+      {
+        "name": "PaymentInfoCard",
+        "sectionCount": 2,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/PaymentInfoCard.jsx"
+      },
+      {
+        "name": "RatesSection",
+        "sectionCount": 3,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/RatesSection.jsx"
+      }
+    ]
+  },
+  "page": {
+    "title": "Framework Contract — Clarion Malmö Live",
+    "backLink": "← Back to Company",
+    "layout": {
+      "type": "vertical",
+      "gap": 24,
+      "padding": {
+        "top": 24,
+        "right": 48,
+        "bottom": 48,
+        "left": 48
+      }
+    }
+  },
+  "sections": [
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Agreement type",
+              "value": "{fields.agreement_type}",
+              "fieldType": "select",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Contract type",
+              "value": "{fields.contract_type}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Number",
+              "value": "{fields.contract_number}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Duration",
+              "value": "{fields.duration}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Cancellation policy",
+              "value": "{fields.cancellation_policy}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "Status",
+              "value": "Status",
+              "fieldType": "badge",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Loyalty points eligible",
+              "value": "{fields.loyalty_eligible}",
+              "fieldType": "select",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Loyalty points benefit eligible",
+              "value": "{fields.loyalty_benefit_eligible}",
+              "fieldType": "select",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Owner",
+              "value": "{fields.owner}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Commission",
+              "value": "{fields.commission}",
+              "fieldType": "text",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Account contract owner",
+              "value": "{fields.account_owner}",
+              "fieldType": "link",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": true,
+              "hasAction": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section-header",
+      "title": "Payment Information"
+    },
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Payment Type",
+              "value": "{fields.payment_type}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Determines the method by which the client will settle billing amounts. Synced from Salesforce.",
+              "tooltipPosition": "right",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Contracted Payment Terms",
+              "value": "{fields.contracted_payment_terms}",
+              "fieldType": "number",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Contracted Invoice Fee",
+              "value": "Yes",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Invoice Conditions",
+              "value": "{fields.invoice_conditions}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Under what conditions is the creation of invoices allowed. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Invoice Frequency",
+              "value": "{fields.invoice_frequency}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Determines how often invoice cycles are generated automatically. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Invoice Reference",
+              "value": "{fields.invoice_reference}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Mandatory customer PO or reference number required on invoices. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "To be Invoiced",
+              "value": "{fields.to_be_invoiced}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Determines which legal entity must receive the invoices. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Account Detail to Invoice",
+              "value": "{fields.account_detail_to_invoice}",
+              "fieldType": "link",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "The specific account entity linked for billing. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": true,
+              "hasAction": false
+            },
+            {
+              "label": "Other Payment Details",
+              "value": "{fields.other_payment_details}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Specific notes regarding custom payment arrangements. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Inherit Options",
+              "value": "{fields.inherit_options}",
+              "fieldType": "select",
+              "editable": false,
+              "hasInfo": true,
+              "infoText": "Defines if payment conditions should be inherited from parent account. Synced from Salesforce.",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section-header",
+      "title": "Rates"
+    },
+    {
+      "type": "data-table",
+      "headers": [
+        "Product",
+        "Rate code",
+        "Price",
+        "Discount"
+      ],
+      "sampleRows": []
+    },
+    {
+      "type": "filter-bar",
+      "filters": []
+    }
+  ]
+}

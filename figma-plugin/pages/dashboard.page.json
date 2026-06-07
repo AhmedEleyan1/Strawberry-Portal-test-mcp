@@ -1,0 +1,228 @@
+{
+  "$schema": "../screens/screen-definition.schema.json",
+  "meta": {
+    "type": "full-page",
+    "pageName": "dashboard",
+    "title": "Dashboard",
+    "generatedAt": "2026-06-07T15:07:06.271Z",
+    "screens": [
+      {
+        "name": "DashboardTopCard",
+        "sectionCount": 1,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/dashboard/DashboardTopCard.jsx"
+      },
+      {
+        "name": "GuestBookingCard",
+        "sectionCount": 3,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/dashboard/GuestBookingCard.jsx"
+      }
+    ]
+  },
+  "page": {
+    "title": "Dashboard",
+    "backLink": "",
+    "layout": {
+      "type": "vertical",
+      "gap": 24,
+      "padding": {
+        "top": 24,
+        "right": 48,
+        "bottom": 48,
+        "left": 48
+      }
+    }
+  },
+  "sections": [
+    {
+      "type": "top-stats-card",
+      "stats": [
+        {
+          "label": "Arrivals",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "Arrivals",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "Departures",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "Stayovers",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "In-stay Visits",
+          "value": "{value}",
+          "hasProgress": true
+        }
+      ],
+      "extras": [
+        {
+          "label": "Early check ins",
+          "value": "{value}"
+        },
+        {
+          "label": "Late check outs",
+          "value": "{value}"
+        },
+        {
+          "label": "No Show to process",
+          "value": "{value}"
+        }
+      ]
+    },
+    {
+      "type": "card-heading-with-action",
+      "title": "Accommodation",
+      "icon": "accommodation",
+      "accentLine": true,
+      "accentColor": "#960014",
+      "action": {
+        "label": "Open in Mews",
+        "componentRef": "buttons/primary/small",
+        "properties": {
+          "Label": "Open in Mews",
+          "Icon right": true,
+          "Icon left": false
+        },
+        "iconRef": "icons/arrowOut"
+      }
+    },
+    {
+      "type": "booking-meta",
+      "bookingNumber": "{bookingNumber}",
+      "source": "{source}"
+    },
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Check in",
+              "value": "{checkIn}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Guest count",
+              "value": "{guestCount}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Room",
+              "value": "{room}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Check out",
+              "value": "{checkOut}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Room category",
+              "value": "{roomCategory}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Rate",
+              "value": "{rate}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "Room status",
+              "value": "{roomStatus}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Reservation created on",
+              "value": "{reservationCreated}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Products",
+              "value": "{products}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

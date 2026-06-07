@@ -1,0 +1,355 @@
+{
+  "$schema": "../screens/screen-definition.schema.json",
+  "meta": {
+    "type": "full-page",
+    "pageName": "company",
+    "title": "Company — Clarion Malmö Live",
+    "generatedAt": "2026-06-07T15:07:06.276Z",
+    "screens": [
+      {
+        "name": "CompanyDetailsCard",
+        "sectionCount": 2,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/CompanyDetailsCard.jsx"
+      },
+      {
+        "name": "ContractsSection",
+        "sectionCount": 1,
+        "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/ContractsSection.jsx"
+      }
+    ]
+  },
+  "page": {
+    "title": "Company — Clarion Malmö Live",
+    "backLink": "← Back to Dashboard",
+    "layout": {
+      "type": "vertical",
+      "gap": 24,
+      "padding": {
+        "top": 24,
+        "right": 48,
+        "bottom": 48,
+        "left": 48
+      }
+    }
+  },
+  "sections": [
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Name",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Customer ID",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "National Reg. No.",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Invoicable",
+              "value": "Yes",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Synced to operational systems",
+              "value": "Yes",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Covered By Central Agreement",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "Credit rating",
+              "value": "Status",
+              "fieldType": "badge",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Credit rating last checked",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": true
+            },
+            {
+              "label": "Invoice Conditions",
+              "value": "Continuous invoicing allowed",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Payment terms",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": true
+            },
+            {
+              "label": "Estimated invoice date",
+              "value": "{data}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Main Contract Holder",
+              "value": "Strawberry Holding AS",
+              "fieldType": "link",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": true,
+              "hasAction": false
+            },
+            {
+              "label": "Main Contract Number",
+              "value": "00018589",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 5",
+          "fields": [
+            {
+              "label": "Electronic invoice address",
+              "value": "965920358",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Invoice email address",
+              "value": "kjetil.furset@choice.no",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Billing address",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 6",
+          "fields": [
+            {
+              "label": "Invoice fee",
+              "value": "No",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "VAT number",
+              "value": "NO965920358MVA",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Department",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 7",
+          "fields": [
+            {
+              "label": "Visiting address",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Duns number",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Status (D&B)",
+              "value": "Active",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 8",
+          "fields": [
+            {
+              "label": "Owner",
+              "value": "Migration user",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Description",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "collapsible-section",
+      "label": "More info"
+    },
+    {
+      "type": "section-header",
+      "title": "Contracts"
+    }
+  ]
+}
