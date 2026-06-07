@@ -1,0 +1,69 @@
+/* ============================================================
+   Design Tokens — Auto-generated from figma-registry.json
+   Generated: 2026-06-07T15:05:13.272Z
+   DO NOT EDIT MANUALLY — run: node scripts/sync-tokens.cjs
+   ============================================================ */
+
+:root {
+  /* Colors */
+  --ds-varm-grey: #F7F5F3;
+  --ds-card-bg: #FFFFFF;
+  --ds-text-primary: #000000;
+  --ds-text-secondary: #71706F;
+  --ds-text-link: #5A0032;
+  --ds-border-light: #EBE9E7;
+  --ds-border-medium: #D8D4D0;
+  --ds-selection-bg: #FDF0EF;
+  --ds-selection-accent: #FC5E58;
+  --ds-status-green-bg: rgba(45,133,65,0.15);
+  --ds-status-green-text: #2D8541;
+
+  /* Spacing */
+  --ds-spacing-xs: 4px;
+  --ds-spacing-sm: 8px;
+  --ds-spacing-md: 16px;
+  --ds-spacing-lg: 24px;
+  --ds-spacing-xl: 32px;
+  --ds-spacing-xxl: 48px;
+
+  /* Layout */
+  --ds-layout-sidebar-width: 80px;
+  --ds-layout-header-height: 80px;
+  --ds-layout-card-padding: 32px;
+  --ds-layout-card-radius: 8px;
+  --ds-layout-content-width: 1392px;
+  --ds-layout-grid-column-width: 320px;
+  --ds-layout-grid-gap: 16px;
+  --ds-layout-field-gap: 32px;
+
+  /* Button accent color */
+  --ds-button-primary-bg: #960014;
+  --ds-button-primary-text: #FFFFFF;
+  --ds-button-primary-radius: 8px;
+  --ds-button-primary-padding: 8px 16px;
+
+}
+
+/* Utility classes */
+.ds-text-varm-grey { color: var(--ds-varm-grey); }
+.ds-bg-varm-grey { background-color: var(--ds-varm-grey); }
+.ds-text-card-bg { color: var(--ds-card-bg); }
+.ds-bg-card-bg { background-color: var(--ds-card-bg); }
+.ds-text-text-primary { color: var(--ds-text-primary); }
+.ds-bg-text-primary { background-color: var(--ds-text-primary); }
+.ds-text-text-secondary { color: var(--ds-text-secondary); }
+.ds-bg-text-secondary { background-color: var(--ds-text-secondary); }
+.ds-text-text-link { color: var(--ds-text-link); }
+.ds-bg-text-link { background-color: var(--ds-text-link); }
+.ds-text-border-light { color: var(--ds-border-light); }
+.ds-bg-border-light { background-color: var(--ds-border-light); }
+.ds-text-border-medium { color: var(--ds-border-medium); }
+.ds-bg-border-medium { background-color: var(--ds-border-medium); }
+.ds-text-selection-bg { color: var(--ds-selection-bg); }
+.ds-bg-selection-bg { background-color: var(--ds-selection-bg); }
+.ds-text-selection-accent { color: var(--ds-selection-accent); }
+.ds-bg-selection-accent { background-color: var(--ds-selection-accent); }
+.ds-text-status-green-bg { color: var(--ds-status-green-bg); }
+.ds-bg-status-green-bg { background-color: var(--ds-status-green-bg); }
+.ds-text-status-green-text { color: var(--ds-status-green-text); }
+.ds-bg-status-green-text { background-color: var(--ds-status-green-text); }
