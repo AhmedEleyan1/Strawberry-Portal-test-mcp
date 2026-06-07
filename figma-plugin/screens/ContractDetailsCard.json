@@ -2,7 +2,7 @@
   "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/ContractDetailsCard.jsx",
-    "generatedAt": "2026-06-07T14:03:28.269Z",
+    "generatedAt": "2026-06-07T15:02:53.390Z",
     "component": "ContractDetailsCard"
   },
   "sections": [

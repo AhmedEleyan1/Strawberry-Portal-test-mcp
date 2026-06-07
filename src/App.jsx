@@ -3,6 +3,7 @@ import { ContractApp } from './components/ContractApp';
 import { CompanyApp } from './components/CompanyApp';
 import { DashboardApp } from './components/DashboardApp';
 import { GuestApp } from './components/GuestApp';
+import { FigmaPreview } from './components/FigmaPreview';
 
 export const NavigationContext = createContext(null);
 
@@ -19,6 +20,7 @@ export function App() {
       case 'contract': return <ContractApp />;
       case 'company': return <CompanyApp />;
       case 'guest': return <GuestApp />;
+      case 'figma-preview': return <FigmaPreview />;
       default: return <DashboardApp />;
     }
   };

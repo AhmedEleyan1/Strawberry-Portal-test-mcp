@@ -2,8 +2,15 @@
   "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/CalendarPopover.jsx",
-    "generatedAt": "2026-06-07T14:03:28.289Z",
+    "generatedAt": "2026-06-07T15:02:53.414Z",
     "component": "CalendarPopover"
   },
-  "sections": []
+  "sections": [
+    {
+      "type": "collapsible-section",
+      "label": "Calendar Picker",
+      "widget": "calendar",
+      "description": "Date selection calendar popover with month navigation"
+    }
+  ]
 }

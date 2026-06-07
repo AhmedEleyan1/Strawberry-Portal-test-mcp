@@ -2,8 +2,30 @@
   "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/TeaserCard.jsx",
-    "generatedAt": "2026-06-07T14:03:28.312Z",
+    "generatedAt": "2026-06-07T15:02:53.426Z",
     "component": "TeaserCard"
   },
-  "sections": []
+  "sections": [
+    {
+      "type": "teaser-card",
+      "title": "{title}",
+      "icon": "contract",
+      "fields": [
+        {
+          "label": "Agreement type",
+          "value": "{agreementType}"
+        },
+        {
+          "label": "Duration",
+          "value": "{duration}"
+        },
+        {
+          "label": "Contracted by",
+          "value": "{contractedBy}"
+        }
+      ],
+      "hasBadge": true,
+      "badgeField": "status"
+    }
+  ]
 }

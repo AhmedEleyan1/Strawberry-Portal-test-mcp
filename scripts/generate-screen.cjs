@@ -265,6 +265,12 @@ function detectComponentType(ast, source) {
   if (source.includes('booking-details-grid')) types.push('booking-details-grid');
   if (source.includes('btn-primary-action') && !source.includes('booking-card-heading')) types.push('primary-action-button');
   
+  // Enhancement #11: Additional component patterns
+  if (source.includes('top-card-stat')) types.push('top-stats-card');
+  if (source.includes('teaser-detail-field')) types.push('teaser-card');
+  if (source.includes('demo-panel')) types.push('demo-panel');
+  if (source.includes('calendar-popover') || source.includes('CalendarPopover')) types.push('calendar');
+  
   return types;
 }
 
@@ -369,6 +375,188 @@ function extractBackLink(ast) {
   });
   
   return text;
+}
+
+// ============================================================
+// Enhancement #11 Extractors
+// ============================================================
+
+/** Extract DashboardTopCard stats */
+function extractTopStatsCard(ast) {
+  const stats = [];
+
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const props = getProps(nodePath.node);
+      if (props.className && props.className.includes('top-card-stat') && !props.className.includes('stat-')) {
+        let label = '';
+        let value = '';
+
+        // Find label and count
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXElement') {
+            const findText = (node, className) => {
+              if (!node.children) return '';
+              for (const c of node.children) {
+                const cp = c.openingElement ? getProps(c) : {};
+                if (cp.className && cp.className.includes(className)) {
+                  for (const t of c.children || []) {
+                    if (t.type === 'JSXText') return t.value.trim();
+                    if (t.type === 'JSXExpressionContainer') return '{value}';
+                  }
+                }
+                if (c.children) {
+                  const found = findText(c, className);
+                  if (found) return found;
+                }
+              }
+              return '';
+            };
+
+            label = label || findText(child, 'stat-label');
+            value = value || findText(child, 'stat-count');
+          }
+        }
+
+        if (label) {
+          stats.push({ label, value: value || '{count}', hasProgress: true });
+        }
+      }
+    }
+  });
+
+  // Also extract extras
+  const extras = [];
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const props = getProps(nodePath.node);
+      if (props.className && props.className.includes('top-card-extra-item')) {
+        let label = '';
+        let value = '';
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXElement') {
+            const cp = getProps(child);
+            if (cp.className && cp.className.includes('extra-label')) {
+              for (const t of child.children || []) {
+                if (t.type === 'JSXText') label = t.value.trim();
+              }
+            }
+            if (cp.className && (cp.className.includes('extra-value') || cp.className.includes('extra-badge'))) {
+              value = '{value}';
+            }
+          }
+        }
+        if (label) extras.push({ label, value: value || '{value}' });
+      }
+    }
+  });
+
+  return {
+    type: 'top-stats-card',
+    stats: stats.length > 0 ? stats : [
+      { label: 'Arrivals', value: '{arrivals.count}', hasProgress: true },
+      { label: 'Departures', value: '{departures.count}', hasProgress: true },
+      { label: 'Stayovers', value: '{stayovers.count}', hasProgress: false },
+      { label: 'In-stay Visits', value: '{instayVisits.count}', hasProgress: true },
+    ],
+    extras: extras.length > 0 ? extras : [
+      { label: 'Early check ins', value: '{extras.earlyCheckIns}' },
+      { label: 'Late check outs', value: '{extras.lateCheckOuts}' },
+      { label: 'No Show to process', value: '{extras.noShowToProcess}' },
+    ],
+  };
+}
+
+/** Extract TeaserCard fields */
+function extractTeaserCard(ast) {
+  const fields = [];
+
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const props = getProps(nodePath.node);
+      if (props.className && props.className.includes('teaser-detail-field')) {
+        let label = '';
+        let value = '';
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXElement') {
+            const cp = getProps(child);
+            if (cp.className && cp.className.includes('detail-label')) {
+              for (const t of child.children || []) {
+                if (t.type === 'JSXText') label = t.value.trim();
+              }
+            }
+            if (cp.className && cp.className.includes('detail-value')) {
+              for (const t of child.children || []) {
+                if (t.type === 'JSXExpressionContainer') value = `{${t.expression.name || 'value'}}`;
+                if (t.type === 'JSXText') value = t.value.trim();
+              }
+            }
+          }
+        }
+        if (label) fields.push({ label, value: value || '{value}' });
+      }
+    }
+  });
+
+  return {
+    type: 'teaser-card',
+    title: '{title}',
+    icon: 'contract',
+    fields: fields.length > 0 ? fields : [
+      { label: 'Agreement type', value: '{agreementType}' },
+      { label: 'Duration', value: '{duration}' },
+      { label: 'Contracted by', value: '{contractedBy}' },
+    ],
+    hasBadge: true,
+    badgeField: 'status',
+  };
+}
+
+/** Extract DemoPanel form controls */
+function extractDemoPanel(ast) {
+  const controls = [];
+
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const props = getProps(nodePath.node);
+      if (props.className && props.className.includes('demo-form-group')) {
+        let label = '';
+        let controlType = 'select';
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXElement') {
+            const name = getJSXName(child.openingElement.name);
+            if (name === 'label') {
+              for (const t of child.children || []) {
+                if (t.type === 'JSXText') label = t.value.trim();
+              }
+            }
+            if (name === 'select') controlType = 'select';
+            if (name === 'button') controlType = 'button';
+          }
+        }
+        if (label) controls.push({ label, controlType });
+      }
+    }
+  });
+
+  return {
+    type: 'collapsible-section',
+    label: 'Testing & Demo Panel',
+    controls: controls.length > 0 ? controls : [
+      { label: 'Covered By Central Agreement', controlType: 'select' },
+      { label: 'Next Credit Rating Outcome', controlType: 'select' },
+    ],
+  };
+}
+
+/** Extract CalendarPopover as a widget section */
+function extractCalendar() {
+  return {
+    type: 'collapsible-section',
+    label: 'Calendar Picker',
+    widget: 'calendar',
+    description: 'Date selection calendar popover with month navigation',
+  };
 }
 
 // ============================================================
@@ -633,6 +821,30 @@ function generateScreenDefinition(filePath) {
     return definition;
   }
   
+  // ─── Dashboard Top Stats ───
+  if (types.includes('top-stats-card')) {
+    definition.sections.push(extractTopStatsCard(ast));
+    return definition;
+  }
+  
+  // ─── Teaser Card ───
+  if (types.includes('teaser-card')) {
+    definition.sections.push(extractTeaserCard(ast));
+    return definition;
+  }
+  
+  // ─── Demo Panel ───
+  if (types.includes('demo-panel')) {
+    definition.sections.push(extractDemoPanel(ast));
+    return definition;
+  }
+  
+  // ─── Calendar ───
+  if (types.includes('calendar')) {
+    definition.sections.push(extractCalendar());
+    return definition;
+  }
+  
   // ─── Standard card patterns (existing) ───
   // Section header
   const sectionTitle = extractSectionHeader(ast);
@@ -725,9 +937,17 @@ function validateAgainstSchema(data, schema) {
     if (!data.meta.component) errors.push('meta.component is required');
   }
 
+  // Page definitions have 'page' instead of 'sections' — valid alternate format
+  if (data.page) {
+    if (!data.page.sections || !Array.isArray(data.page.sections)) {
+      errors.push('page.sections is required and must be an array');
+    }
+    return errors;
+  }
+
   // sections check
   if (!data.sections) {
-    errors.push('Missing required property: sections');
+    errors.push('Missing required property: sections (or page for page-type definitions)');
   } else if (!Array.isArray(data.sections)) {
     errors.push('sections must be an array');
   } else if (data.sections.length === 0) {

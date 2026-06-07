@@ -2227,3 +2227,252 @@ body {
   color: var(--text-primary);
   margin: 0;
 }
+
+/* ============================================================
+   Figma JSON Preview (Enhancement #12)
+   ============================================================ */
+.figma-preview {
+  display: flex;
+  height: 100vh;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+}
+
+.figma-preview-sidebar {
+  width: 240px;
+  background: #16213e;
+  border-right: 1px solid #2a2a4a;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.figma-preview-sidebar-title {
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8888aa;
+  border-bottom: 1px solid #2a2a4a;
+  margin: 0;
+}
+
+.figma-preview-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.figma-preview-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+  border-left: 3px solid transparent;
+}
+
+.figma-preview-item:hover { background: #1a2744; }
+.figma-preview-item.active {
+  background: #1f3460;
+  border-left-color: #6366f1;
+  color: white;
+}
+
+.figma-preview-item-name { font-weight: 500; }
+.figma-preview-item-badge {
+  font-size: 11px;
+  background: #2a2a4a;
+  padding: 2px 6px;
+  border-radius: 10px;
+  color: #8888aa;
+}
+
+.figma-preview-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.figma-preview-visual {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.figma-preview-json {
+  width: 420px;
+  background: #0f0f23;
+  border-left: 1px solid #2a2a4a;
+  padding: 24px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.figma-preview-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6366f1;
+  margin: 0 0 16px 0;
+}
+
+.figma-preview-frame {
+  background: #f7f5f3;
+  border-radius: 12px;
+  padding: 24px;
+  color: #000;
+}
+
+.figma-preview-code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #a5b4fc;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+
+.figma-preview-page-info {
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.figma-preview-back-link {
+  display: block;
+  color: #5a0032;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.figma-preview-component-ref {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Section preview blocks */
+.fp-section {
+  margin-bottom: 12px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  position: relative;
+}
+
+.fp-type-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  background: #6366f1;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fp-heading { font-size: 16px; font-weight: 600; margin: 0; color: #000; }
+.fp-heading-row { display: flex; align-items: center; gap: 8px; }
+.fp-icon { font-size: 18px; }
+
+.fp-action-btn {
+  margin-left: auto;
+  background: #960014;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fp-ref-tag {
+  font-size: 9px;
+  background: rgba(255,255,255,0.2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 400;
+}
+
+.fp-accent-line {
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 10px;
+}
+
+.fp-meta-row { display: flex; gap: 16px; align-items: center; font-size: 13px; }
+.fp-meta-badge { font-weight: 600; }
+.fp-meta-source { color: #71706f; }
+
+.fp-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.fp-column { display: flex; flex-direction: column; gap: 16px; }
+.fp-col-name { font-size: 11px; font-weight: 600; color: #8888aa; text-transform: uppercase; }
+
+.fp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fp-field-label { font-size: 12px; color: #71706f; }
+.fp-field-value { font-size: 14px; color: #000; font-weight: 500; }
+.fp-info-icon { font-size: 12px; color: #6366f1; cursor: help; }
+
+.fp-stats-row { display: flex; gap: 24px; }
+.fp-stat-item { flex: 1; }
+.fp-stat-label { font-size: 12px; color: #71706f; display: block; }
+.fp-stat-value { font-size: 20px; font-weight: 700; color: #000; }
+.fp-progress-bar { height: 4px; background: #ebe9e7; border-radius: 2px; margin-top: 6px; }
+.fp-progress-fill { height: 100%; width: 50%; background: #2d8541; border-radius: 2px; }
+
+.fp-extras-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ebe9e7;
+  font-size: 13px;
+}
+.fp-extra { color: #71706f; }
+
+.fp-teaser-content { display: flex; align-items: flex-start; gap: 12px; }
+.fp-teaser-fields { display: flex; gap: 16px; margin-top: 4px; font-size: 12px; color: #71706f; }
+.fp-badge { background: rgba(45,133,65,0.15); color: #2d8541; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-left: auto; }
+
+.fp-table-headers { display: flex; gap: 16px; background: #f7f5f3; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: 600; color: #71706f; }
+.fp-table-body { padding: 12px 8px; font-size: 13px; color: #aaa; font-style: italic; }
+
+.fp-collapsible-header { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.fp-widget-tag { font-size: 10px; background: #f0e6ff; color: #7c3aed; padding: 2px 8px; border-radius: 4px; }
+.fp-controls { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #ebe9e7; }
+.fp-control { font-size: 12px; color: #71706f; }
+
+.fp-filter-placeholder { color: #aaa; font-style: italic; font-size: 13px; }
+
+.fp-generic-json { font-size: 11px; color: #71706f; background: #f7f5f3; padding: 8px; border-radius: 4px; overflow-x: auto; }
+

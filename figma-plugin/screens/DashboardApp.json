@@ -2,7 +2,7 @@
   "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/DashboardApp.jsx",
-    "generatedAt": "2026-06-07T14:03:28.321Z",
+    "generatedAt": "2026-06-07T15:02:53.440Z",
     "component": "DashboardApp",
     "type": "page"
   },
