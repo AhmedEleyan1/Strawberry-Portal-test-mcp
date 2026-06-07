@@ -601,6 +601,272 @@ async function buildTopStatsCard(section) {
   return card;
 }
 
+// ============================================================
+// Build: Status Badge (colored pill)
+// ============================================================
+async function buildStatusBadge(section) {
+  var badge = figma.createFrame();
+  badge.name = "Status Badge";
+  badge.layoutMode = "HORIZONTAL";
+  badge.primaryAxisSizingMode = "AUTO";
+  badge.counterAxisSizingMode = "AUTO";
+  badge.paddingLeft = badge.paddingRight = 12;
+  badge.paddingTop = badge.paddingBottom = 4;
+  badge.cornerRadius = 24;
+
+  var variant = section.variant || "default";
+  var colorMap = {
+    green:   { bg: TOKENS.colors.statusGreen, bgToken: "statusGreen", textToken: "statusGreenText" },
+    red:     { bg: TOKENS.colors.statusRed,   bgToken: "statusRed",   textToken: "statusRedText" },
+    blue:    { bg: TOKENS.colors.statusBlue,  bgToken: "statusBlue",  textToken: "statusBlue" },
+    yellow:  { bg: TOKENS.colors.statusYellow,bgToken: "statusYellow", textToken: "statusYellow" },
+    default: { bg: TOKENS.colors.textSecondary, bgToken: "textSecondary", textToken: "textSecondary" }
+  };
+  var c = colorMap[variant] || colorMap["default"];
+
+  var bgPaint = { type: "SOLID", color: c.bg, opacity: 0.15 };
+  if (COLOR_VARS[c.bgToken]) {
+    try { bgPaint = figma.variables.setBoundVariableForPaint(bgPaint, "color", COLOR_VARS[c.bgToken]); bgPaint.opacity = 0.15; } catch(e) {}
+  }
+  badge.fills = [bgPaint];
+
+  var textColor = c.bg;
+  var text = await buildText(section.text || "Status", 12, "Medium", textColor, c.textToken, "label");
+  badge.appendChild(text);
+  return badge;
+}
+
+// ============================================================
+// Build: Filter Bar
+// ============================================================
+async function buildFilterBar(section) {
+  var bar = figma.createFrame();
+  bar.name = "Filter Bar";
+  bar.layoutMode = "HORIZONTAL";
+  bar.itemSpacing = 24;
+  bar.primaryAxisSizingMode = "AUTO";
+  bar.counterAxisSizingMode = "AUTO";
+  bar.paddingLeft = bar.paddingRight = 24;
+  bar.paddingTop = bar.paddingBottom = 16;
+  bar.fills = solidFill(TOKENS.colors.cardBg, "cardBg");
+  bar.cornerRadius = TOKENS.layout.cardRadius;
+  bar.effects = [{ type: "DROP_SHADOW", color: { r: 0, g: 0, b: 0, a: 0.04 }, offset: { x: 0, y: 1 }, radius: 4, spread: 0, visible: true, blendMode: "NORMAL" }];
+
+  var filters = section.filters || [];
+  for (var f = 0; f < filters.length; f++) {
+    var col = figma.createFrame();
+    col.name = "filter-" + (filters[f].label || "filter");
+    col.layoutMode = "VERTICAL";
+    col.itemSpacing = 4;
+    col.primaryAxisSizingMode = "AUTO";
+    col.counterAxisSizingMode = "AUTO";
+    col.fills = [];
+    var lbl = await buildText(filters[f].label || "", 12, "Regular", TOKENS.colors.textSecondary, "textSecondary", "label");
+    col.appendChild(lbl);
+    var val = await buildText(filters[f].value || "–", 14, "Regular", TOKENS.colors.textPrimary, "textPrimary", "body");
+    col.appendChild(val);
+    if (filters[f].inputType === "select") {
+      var ind = figma.createFrame(); ind.name = "select-line"; ind.resize(120, 1);
+      ind.fills = solidFill(TOKENS.colors.borderMedium, "borderMedium");
+      col.appendChild(ind);
+    }
+    bar.appendChild(col);
+  }
+  return bar;
+}
+
+// ============================================================
+// Build: Teaser Card
+// ============================================================
+async function buildTeaserCard(section) {
+  var card = figma.createFrame();
+  card.name = "Teaser Card";
+  card.layoutMode = "VERTICAL";
+  card.itemSpacing = 12;
+  card.primaryAxisSizingMode = "AUTO";
+  card.counterAxisSizingMode = "FIXED";
+  card.resize(320, 100);
+  card.paddingTop = card.paddingBottom = 16;
+  card.paddingLeft = card.paddingRight = 20;
+  card.cornerRadius = TOKENS.layout.cardRadius;
+  card.fills = solidFill(TOKENS.colors.cardBg, "cardBg");
+  card.effects = [{ type: "DROP_SHADOW", color: { r: 0, g: 0, b: 0, a: 0.04 }, offset: { x: 0, y: 1 }, radius: 4, spread: 0, visible: true, blendMode: "NORMAL" }];
+
+  // Top row: icon + title
+  var topRow = figma.createFrame();
+  topRow.name = "teaser-top";
+  topRow.layoutMode = "HORIZONTAL";
+  topRow.itemSpacing = 12;
+  topRow.primaryAxisSizingMode = "AUTO";
+  topRow.counterAxisSizingMode = "AUTO";
+  topRow.counterAxisAlignItems = "CENTER";
+  topRow.fills = [];
+
+  if (section.iconComponentKey) {
+    try {
+      var ic = await figma.importComponentByKeyAsync(section.iconComponentKey);
+      var inst = ic.createInstance(); inst.resize(20, 20);
+      topRow.appendChild(inst);
+    } catch(e) {}
+  }
+
+  var title = await buildText(section.title || "Item", 16, "Medium", TOKENS.colors.textPrimary, "textPrimary", "heading");
+  topRow.appendChild(title);
+  card.appendChild(topRow);
+  topRow.layoutSizingHorizontal = "FILL";
+
+  // Details row
+  if (section.details && section.details.length > 0) {
+    var detRow = figma.createFrame();
+    detRow.name = "teaser-details";
+    detRow.layoutMode = "HORIZONTAL";
+    detRow.itemSpacing = 24;
+    detRow.primaryAxisSizingMode = "AUTO";
+    detRow.counterAxisSizingMode = "AUTO";
+    detRow.fills = [];
+    for (var d = 0; d < section.details.length; d++) {
+      var dc = figma.createFrame();
+      dc.name = "detail-" + d; dc.layoutMode = "VERTICAL"; dc.itemSpacing = 2;
+      dc.primaryAxisSizingMode = "AUTO"; dc.counterAxisSizingMode = "AUTO"; dc.fills = [];
+      var dl = await buildText(section.details[d].label || "", 12, "Regular", TOKENS.colors.textSecondary, "textSecondary", "label");
+      dc.appendChild(dl);
+      var dv = await buildText(section.details[d].value || "–", 14, "Regular", TOKENS.colors.textPrimary, "textPrimary", "body");
+      dc.appendChild(dv);
+      detRow.appendChild(dc);
+    }
+    card.appendChild(detRow);
+    detRow.layoutSizingHorizontal = "FILL";
+  }
+
+  if (section.badge) {
+    var bdg = await buildStatusBadge(section.badge);
+    card.appendChild(bdg);
+  }
+  return card;
+}
+
+// ============================================================
+// Build: Sidebar Nav
+// ============================================================
+async function buildSidebarNav(section) {
+  var sidebar = figma.createFrame();
+  sidebar.name = "Sidebar Nav";
+  sidebar.layoutMode = "VERTICAL";
+  sidebar.primaryAxisSizingMode = "FIXED";
+  sidebar.counterAxisSizingMode = "FIXED";
+  sidebar.resize(TOKENS.layout.sidebarWidth, 900);
+  sidebar.paddingTop = 16;
+  sidebar.itemSpacing = 4;
+  sidebar.fills = solidFill(TOKENS.colors.cardBg, "cardBg");
+  sidebar.strokes = solidFill(TOKENS.colors.borderLight, "borderLight");
+  sidebar.strokeWeight = 1; sidebar.strokeAlign = "INSIDE";
+
+  var items = section.items || [];
+  for (var n = 0; n < items.length; n++) {
+    var ni = figma.createFrame();
+    ni.name = "nav-" + (items[n].label || "item");
+    ni.layoutMode = "VERTICAL";
+    ni.primaryAxisAlignItems = "CENTER";
+    ni.counterAxisAlignItems = "CENTER";
+    ni.primaryAxisSizingMode = "AUTO";
+    ni.counterAxisSizingMode = "FIXED";
+    ni.resize(TOKENS.layout.sidebarWidth, 64);
+    ni.itemSpacing = 4;
+    ni.fills = items[n].active ? solidFill(TOKENS.colors.selectionBg, "selectionBg") : [];
+
+    if (items[n].iconComponentKey) {
+      try {
+        var navIc = await figma.importComponentByKeyAsync(items[n].iconComponentKey);
+        var navInst = navIc.createInstance(); navInst.resize(24, 24);
+        ni.appendChild(navInst);
+      } catch(e) {}
+    } else {
+      var ph = figma.createFrame(); ph.name = "icon"; ph.resize(24, 24);
+      ph.cornerRadius = 4; ph.fills = solidFill(TOKENS.colors.textSecondary, "textSecondary"); ph.opacity = 0.3;
+      ni.appendChild(ph);
+    }
+
+    var navLbl = await buildText(items[n].label || "", 10, "Regular",
+      items[n].active ? TOKENS.colors.textLink : TOKENS.colors.textSecondary,
+      items[n].active ? "textLink" : "textSecondary", "label");
+    ni.appendChild(navLbl);
+    sidebar.appendChild(ni);
+  }
+  return sidebar;
+}
+
+// ============================================================
+// Build: Top Header
+// ============================================================
+async function buildTopHeader(section) {
+  var header = figma.createFrame();
+  header.name = "Top Header";
+  header.layoutMode = "HORIZONTAL";
+  header.primaryAxisAlignItems = "SPACE_BETWEEN";
+  header.counterAxisAlignItems = "CENTER";
+  header.primaryAxisSizingMode = "FIXED";
+  header.counterAxisSizingMode = "FIXED";
+  header.resize(TOKENS.layout.contentWidth, TOKENS.layout.headerHeight);
+  header.paddingLeft = header.paddingRight = 24;
+  header.fills = solidFill(TOKENS.colors.cardBg, "cardBg");
+  header.strokes = solidFill(TOKENS.colors.borderLight, "borderLight");
+  header.strokeWeight = 1; header.strokeAlign = "INSIDE";
+
+  var logo = await buildText(section.logoText || "Strawberry Portal", 18, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+  header.appendChild(logo);
+
+  if (section.navItems && section.navItems.length > 0) {
+    var nav = figma.createFrame();
+    nav.name = "nav-items"; nav.layoutMode = "HORIZONTAL"; nav.itemSpacing = 24;
+    nav.counterAxisAlignItems = "CENTER";
+    nav.primaryAxisSizingMode = "AUTO"; nav.counterAxisSizingMode = "AUTO"; nav.fills = [];
+    for (var ni = 0; ni < section.navItems.length; ni++) {
+      var nt = await buildText(section.navItems[ni].label || "", 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "body");
+      nav.appendChild(nt);
+    }
+    header.appendChild(nav);
+  }
+  return header;
+}
+
+// ============================================================
+// Build: Collapsible Section
+// ============================================================
+async function buildCollapsibleSection(section) {
+  var wrapper = figma.createFrame();
+  wrapper.name = "Collapsible Section";
+  wrapper.layoutMode = "VERTICAL";
+  wrapper.primaryAxisSizingMode = "AUTO";
+  wrapper.counterAxisSizingMode = "AUTO";
+  wrapper.fills = [];
+
+  var divider = figma.createFrame();
+  divider.name = "divider"; divider.resize(TOKENS.layout.contentWidth, 1);
+  divider.fills = solidFill(TOKENS.colors.borderLight, "borderLight");
+  wrapper.appendChild(divider);
+  divider.layoutSizingHorizontal = "FILL";
+
+  var toggleRow = figma.createFrame();
+  toggleRow.name = "collapse-toggle";
+  toggleRow.layoutMode = "HORIZONTAL";
+  toggleRow.primaryAxisAlignItems = "SPACE_BETWEEN";
+  toggleRow.counterAxisAlignItems = "CENTER";
+  toggleRow.primaryAxisSizingMode = "AUTO";
+  toggleRow.counterAxisSizingMode = "AUTO";
+  toggleRow.paddingTop = toggleRow.paddingBottom = 12;
+  toggleRow.fills = [];
+
+  var lbl = await buildText(section.label || "More info", 14, "Medium", TOKENS.colors.textPrimary, "textPrimary", "body");
+  toggleRow.appendChild(lbl);
+  var chevron = await buildText("▾", 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "body");
+  chevron.name = "chevron";
+  toggleRow.appendChild(chevron);
+
+  wrapper.appendChild(toggleRow);
+  toggleRow.layoutSizingHorizontal = "FILL";
+  return wrapper;
+}
+
 async function buildScreen(definition) {
   await loadFonts();
   await discoverVariables();
@@ -637,6 +903,36 @@ async function buildScreen(definition) {
     if (sec.type === "top-stats-card") {
       var topCard = await buildTopStatsCard(sec);
       root.appendChild(topCard);
+    }
+
+    if (sec.type === "status-badge") {
+      var badge = await buildStatusBadge(sec);
+      root.appendChild(badge);
+    }
+
+    if (sec.type === "filter-bar") {
+      var filterBar = await buildFilterBar(sec);
+      root.appendChild(filterBar);
+    }
+
+    if (sec.type === "teaser-card") {
+      var teaser = await buildTeaserCard(sec);
+      root.appendChild(teaser);
+    }
+
+    if (sec.type === "sidebar-nav") {
+      var sidebarNav = await buildSidebarNav(sec);
+      root.appendChild(sidebarNav);
+    }
+
+    if (sec.type === "top-header") {
+      var topHeader = await buildTopHeader(sec);
+      root.appendChild(topHeader);
+    }
+
+    if (sec.type === "collapsible-section") {
+      var collapsible = await buildCollapsibleSection(sec);
+      root.appendChild(collapsible);
     }
   }
 
