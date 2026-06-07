@@ -3,15 +3,27 @@
 
 var TOKENS = {
   colors: {
-    varmGrey:      { r: 0.969, g: 0.961, b: 0.953 },
-    cardBg:        { r: 1, g: 1, b: 1 },
-    textPrimary:   { r: 0, g: 0, b: 0 },
-    textSecondary: { r: 0.443, g: 0.439, b: 0.435 },
-    textLink:      { r: 0.353, g: 0, b: 0.196 },
-    borderLight:   { r: 0.922, g: 0.914, b: 0.906 },
+    varmGrey:        { r: 0.969, g: 0.961, b: 0.953 },
+    pageBg:          { r: 0.969, g: 0.961, b: 0.953 },
+    cardBg:          { r: 1, g: 1, b: 1 },
+    textPrimary:     { r: 0, g: 0, b: 0 },
+    textSecondary:   { r: 0.443, g: 0.439, b: 0.435 },
+    textLink:        { r: 0.353, g: 0, b: 0.196 },
+    borderLight:     { r: 0.922, g: 0.914, b: 0.906 },
+    borderMedium:    { r: 0.847, g: 0.831, b: 0.816 },
+    selectionBg:     { r: 0.992, g: 0.941, b: 0.937 },
+    selectionAccent: { r: 0.988, g: 0.369, b: 0.345 },
+    statusGreen:     { r: 0.176, g: 0.522, b: 0.255 },
+    statusGreenBg:   { r: 0.176, g: 0.522, b: 0.255 },
+    statusGreenText: { r: 0.176, g: 0.522, b: 0.255 },
+    statusRed:       { r: 0.773, g: 0.161, b: 0.141 },
+    statusRedBg:     { r: 0.773, g: 0.161, b: 0.141 },
+    statusRedText:   { r: 0.773, g: 0.161, b: 0.141 },
+    statusBlue:      { r: 0.231, g: 0.510, b: 0.965 },
+    statusYellow:    { r: 0.898, g: 0.631, b: 0 },
   },
   spacing: { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 },
-  layout: { cardPadding: 32, cardRadius: 8, colWidth: 320, gridGap: 16, fieldGap: 32, contentWidth: 1392 }
+  layout: { cardPadding: 32, cardRadius: 8, colWidth: 320, gridGap: 16, fieldGap: 32, contentWidth: 1392, sidebarWidth: 80, headerHeight: 80 }
 };
 
 var COMPONENT_KEYS = {
@@ -24,7 +36,14 @@ var bodyFont = "Inter";
 var displayFont = "Inter";
 
 // HEX matching for variable discovery
-var HEX_MAP = { "000000": "textPrimary", "71706f": "textSecondary", "5a0032": "textLink", "ffffff": "cardBg", "ebe9e7": "borderLight", "f7f5f3": "varmGrey" };
+var HEX_MAP = { "000000": "textPrimary", "71706f": "textSecondary", "5a0032": "textLink", "ffffff": "cardBg", "ebe9e7": "borderLight", "f7f5f3": "varmGrey", "d8d4d0": "borderMedium", "fdf0ef": "selectionBg", "fc5e58": "selectionAccent", "2d8541": "statusGreen", "c52924": "statusRed", "3b82f6": "statusBlue", "e5a100": "statusYellow" };
+
+// Helper: append child and set fill width (avoids the "must be auto-layout child" error)
+function appendFill(parent, child) {
+  parent.appendChild(child);
+  child.layoutSizingHorizontal = "FILL";
+  return child;
+}
 
 function rgbToHex(r, g, b) {
   function h(c) { var s = Math.round(c * 255).toString(16); return s.length === 1 ? "0" + s : s; }
@@ -32,10 +51,67 @@ function rgbToHex(r, g, b) {
 }
 
 async function discoverVariables() {
+  var VAR_SEARCH_MAP = {
+    textPrimary:   ["text/primary", "text-primary", "text/default", "foreground/default", "foreground/primary", "content/primary"],
+    textSecondary: ["text/secondary", "text-secondary", "foreground/secondary", "content/secondary", "text/muted"],
+    textLink:      ["text/link", "text/brand", "text/accent", "brand/primary", "accent", "link"],
+    cardBg:        ["surface/primary", "surface/default", "bg/card", "background/card", "surface/card", "bg/primary", "background/primary", "surface", "background/default"],
+    borderLight:   ["border/default", "border/light", "border/primary", "stroke/default", "border", "divider", "separator"],
+    varmGrey:        ["surface/secondary", "bg/secondary", "background/secondary", "surface/muted", "bg/muted"],
+    pageBg:          ["surface/page", "bg/page", "background/page", "page"],
+    borderMedium:    ["border/medium", "border/active", "border/strong", "stroke/medium"],
+    selectionBg:     ["selection/bg", "selection/background", "selected/bg", "highlight/bg"],
+    selectionAccent: ["selection/accent", "selection/indicator", "active/indicator", "accent/red"],
+    statusGreen:     ["status/green", "status/success", "success", "success/default", "positive", "green", "check-in", "arrival"],
+    statusGreenBg:   ["status/green/bg", "success/bg", "success/background"],
+    statusGreenText: ["status/green/text", "success/text", "success/foreground"],
+    statusRed:       ["status/red", "status/error", "error", "error/default", "negative", "red", "danger", "check-out", "departure"],
+    statusRedBg:     ["status/red/bg", "error/bg", "error/background"],
+    statusRedText:   ["status/red/text", "error/text", "error/foreground"],
+    statusBlue:      ["status/blue", "status/info", "info", "info/default", "blue", "accent/blue", "in-stay"],
+    statusYellow:    ["status/yellow", "status/warning", "warning", "warning/default", "caution"]
+  };
+
   try {
     var vars = figma.variables.getLocalVariables("COLOR");
-    for (var i = 0; i < vars.length; i++) {
-      var v = vars[i];
+    console.log("Found " + vars.length + " color variables total");
+
+    // Pass 1: Exact name match (most reliable)
+    for (var token in VAR_SEARCH_MAP) {
+      var searches = VAR_SEARCH_MAP[token];
+      for (var s = 0; s < searches.length; s++) {
+        if (COLOR_VARS[token]) break;
+        for (var i = 0; i < vars.length; i++) {
+          var n = vars[i].name.toLowerCase().replace(/\s+/g, "");
+          if (n === searches[s] || n.endsWith("/" + searches[s]) || n.endsWith("/" + searches[s].split("/").pop())) {
+            COLOR_VARS[token] = vars[i];
+            console.log("✓ " + token + " → " + vars[i].name + " (name match: " + searches[s] + ")");
+            break;
+          }
+        }
+      }
+    }
+
+    // Pass 2: Partial name match (substring)
+    for (var token2 in VAR_SEARCH_MAP) {
+      if (COLOR_VARS[token2]) continue;
+      var searches2 = VAR_SEARCH_MAP[token2];
+      for (var s2 = 0; s2 < searches2.length; s2++) {
+        if (COLOR_VARS[token2]) break;
+        for (var j = 0; j < vars.length; j++) {
+          var n2 = vars[j].name.toLowerCase();
+          if (n2.indexOf(searches2[s2]) !== -1) {
+            COLOR_VARS[token2] = vars[j];
+            console.log("✓ " + token2 + " → " + vars[j].name + " (partial: " + searches2[s2] + ")");
+            break;
+          }
+        }
+      }
+    }
+
+    // Pass 3: Hex fallback for anything still missing
+    for (var k = 0; k < vars.length; k++) {
+      var v = vars[k];
       var modeIds = Object.keys(v.valuesByMode);
       if (modeIds.length > 0) {
         var val = v.valuesByMode[modeIds[0]];
@@ -43,17 +119,18 @@ async function discoverVariables() {
           var hex = rgbToHex(val.r, val.g, val.b);
           if (HEX_MAP[hex] && !COLOR_VARS[HEX_MAP[hex]]) {
             COLOR_VARS[HEX_MAP[hex]] = v;
+            console.log("✓ " + HEX_MAP[hex] + " → " + v.name + " (hex: #" + hex + ")");
           }
         }
       }
-      // Also match by name
-      var n = v.name.toLowerCase();
-      if (n.indexOf("primary") !== -1 && !COLOR_VARS.textPrimary) COLOR_VARS.textPrimary = v;
-      if (n.indexOf("secondary") !== -1 && !COLOR_VARS.textSecondary) COLOR_VARS.textSecondary = v;
-      if ((n.indexOf("link") !== -1 || n.indexOf("brand") !== -1) && !COLOR_VARS.textLink) COLOR_VARS.textLink = v;
-      if ((n.indexOf("surface") !== -1 || n.indexOf("card") !== -1) && !COLOR_VARS.cardBg) COLOR_VARS.cardBg = v;
     }
-    console.log("Matched " + Object.keys(COLOR_VARS).length + " color variables");
+
+    // Log results
+    var matched = Object.keys(COLOR_VARS);
+    console.log("Matched " + matched.length + "/6 color tokens: " + matched.join(", "));
+    var missing = [];
+    for (var t in VAR_SEARCH_MAP) { if (!COLOR_VARS[t]) missing.push(t); }
+    if (missing.length > 0) console.log("✗ Missing: " + missing.join(", "));
   } catch (e) { console.log("Variable discovery failed:", e); }
 }
 
@@ -311,15 +388,14 @@ async function buildTopStatsCard(section) {
     statFrame.counterAxisSizingMode = "AUTO";
     statFrame.fills = [];
 
-    // Header row (label+count left, icon right)
+    // Header row (label+count left, icon right) - FILL width
     var headerRow = figma.createFrame();
     headerRow.name = "stat-header";
     headerRow.layoutMode = "HORIZONTAL";
     headerRow.primaryAxisAlignItems = "SPACE_BETWEEN";
     headerRow.counterAxisAlignItems = "CENTER";
-    headerRow.primaryAxisSizingMode = "FIXED";
+    headerRow.primaryAxisSizingMode = "AUTO";
     headerRow.counterAxisSizingMode = "AUTO";
-    headerRow.resize(300, 60);
     headerRow.fills = [];
 
     // Info column (label + count)
@@ -339,20 +415,50 @@ async function buildTopStatsCard(section) {
 
     headerRow.appendChild(infoCol);
 
-    // Icon circle
+    // Icon circle with design system component instance
+    var ICON_COMPONENT_KEYS = {
+      "check-in":    "726e70919d416c59b6b36526443535307822a0db",
+      "check-out":   "78a0c83c19997f766c4f2d006a22af95ecfbe366",
+      "stayover":    "d65b005c4140b52437e89834895ee04c9bc35eed",
+      "in-stay":     "d65b005c4140b52437e89834895ee04c9bc35eed"
+    };
+
     var iconCircle = figma.createFrame();
     iconCircle.name = "icon-" + stat.label.toLowerCase().replace(/\s/g, "-");
     iconCircle.resize(40, 40);
     iconCircle.cornerRadius = 20;
-    if (stat.iconBg) {
-      // Parse rgba
+    iconCircle.clipsContent = false;
+
+    if (stat.iconBgToken && COLOR_VARS[stat.iconBgToken]) {
+      var bgPaint = { type: "SOLID", color: TOKENS.colors[stat.iconBgToken] || { r: 0.5, g: 0.5, b: 0.5 }, opacity: 0.1 };
+      try {
+        iconCircle.fills = [figma.variables.setBoundVariableForPaint(bgPaint, "color", COLOR_VARS[stat.iconBgToken])];
+        iconCircle.fills[0].opacity = 0.1;
+      } catch (e) { iconCircle.fills = [bgPaint]; }
+    } else if (stat.iconBg) {
       var bgMatch = stat.iconBg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),?\s*([\d.]+)?\)/);
       if (bgMatch) {
         iconCircle.fills = [{ type: "SOLID", color: { r: parseInt(bgMatch[1])/255, g: parseInt(bgMatch[2])/255, b: parseInt(bgMatch[3])/255 }, opacity: parseFloat(bgMatch[4] || 1) }];
       }
     }
+
+    // Place icon component instance inside circle
+    var iconKey = stat.iconComponentKey || (ICON_COMPONENT_KEYS[stat.icon] || "");
+    if (iconKey) {
+      try {
+        var iconComp = await figma.importComponentByKeyAsync(iconKey);
+        var iconInstance = iconComp.createInstance();
+        iconInstance.resize(20, 20);
+        iconInstance.x = 9.67;
+        iconInstance.y = 10;
+        iconCircle.appendChild(iconInstance);
+        console.log("✓ Icon instance placed: " + stat.icon + " → " + iconComp.name);
+      } catch (e) { console.log("✗ Icon import error for " + stat.icon + ": " + e.message); }
+    }
+
     headerRow.appendChild(iconCircle);
     statFrame.appendChild(headerRow);
+    headerRow.layoutSizingHorizontal = "FILL";
 
     // Progress bar (if present)
     if (stat.progressPercent !== undefined && stat.progressColor) {
@@ -370,7 +476,11 @@ async function buildTopStatsCard(section) {
       var barWidth = Math.round(300 * stat.progressPercent / 100);
       progressBar.resize(barWidth, 4);
       progressBar.cornerRadius = 2;
-      progressBar.fills = [{ type: "SOLID", color: hexToRgb(stat.progressColor) }];
+      if (stat.progressToken && COLOR_VARS[stat.progressToken]) {
+        progressBar.fills = solidFill(hexToRgb(stat.progressColor), stat.progressToken);
+      } else {
+        progressBar.fills = [{ type: "SOLID", color: hexToRgb(stat.progressColor) }];
+      }
       progressTrack.appendChild(progressBar);
 
       statFrame.appendChild(progressTrack);
@@ -392,8 +502,8 @@ async function buildTopStatsCard(section) {
   divH.name = "divider-h";
   divH.resize(TOKENS.layout.contentWidth - 48, 1);
   divH.fills = solidFill(TOKENS.colors.borderLight, "borderLight");
-  divH.layoutSizingHorizontal = "FILL";
   card.appendChild(divH);
+  divH.layoutSizingHorizontal = "FILL";
 
   // Extras row
   var extras = section.extras || [];

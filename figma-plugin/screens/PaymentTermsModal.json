@@ -1,8 +1,13 @@
 {
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/PaymentTermsModal.jsx",
-    "generatedAt": "2026-06-05T11:03:36.238Z",
+    "generatedAt": "2026-06-07T08:23:27.758Z",
     "component": "PaymentTermsModal"
   },
-  "sections": []
+  "sections": [
+    {
+      "type": "section-header",
+      "title": "Change payment terms"
+    }
+  ]
 }

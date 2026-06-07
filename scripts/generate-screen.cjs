@@ -1,247 +1,385 @@
 #!/usr/bin/env node
 // ============================================================
-// Screen Definition Generator
-// Parses React JSX components and generates screen-definition
-// JSON files that the Universal Figma Builder plugin can read.
+// Screen Definition Generator v2 — AST-based
+// Uses @babel/parser to accurately parse React JSX components
+// and generate screen-definition JSON for the Figma plugin.
 //
 // Usage:
-//   node scripts/generate-screen.js src/components/contract/PaymentInfoCard.jsx
-//   node scripts/generate-screen.js src/components/ContractApp.jsx
-//   node scripts/generate-screen.js --all
+//   node scripts/generate-screen.cjs src/components/contract/PaymentInfoCard.jsx
+//   node scripts/generate-screen.cjs --all
+//   node scripts/generate-screen.cjs --page src/components/ContractApp.jsx
 // ============================================================
 
 const fs = require('fs');
 const path = require('path');
+const parser = require('@babel/parser');
+const traverse = require('@babel/traverse').default;
 
 const REGISTRY = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, '../figma-registry.json'), 'utf8')
 );
 
 // ============================================================
-// Simple JSX Parser — extracts component structure from JSX
+// AST Helpers
 // ============================================================
-function extractFieldsFromJSX(content) {
-  const fields = [];
-  
-  // Match DetailsField components
-  const detailsFieldRegex = /<DetailsField\s+([^>]+?)\/>/gs;
-  let match;
-  
-  while ((match = detailsFieldRegex.exec(content)) !== null) {
-    const propsStr = match[1];
-    const field = {
-      type: 'details-field',
-      props: {}
-    };
 
-    // Extract string props
-    const stringPropRegex = /(\w+)="([^"]*?)"/g;
-    let propMatch;
-    while ((propMatch = stringPropRegex.exec(propsStr)) !== null) {
-      field.props[propMatch[1]] = propMatch[2];
+/** Extract the value of a JSX attribute (string, boolean, expression) */
+function getAttrValue(attr) {
+  if (!attr || !attr.value) return true; // bare attribute = true
+  if (attr.value.type === 'StringLiteral') return attr.value.value;
+  if (attr.value.type === 'JSXExpressionContainer') {
+    const expr = attr.value.expression;
+    if (expr.type === 'BooleanLiteral') return expr.value;
+    if (expr.type === 'StringLiteral') return expr.value;
+    if (expr.type === 'NumericLiteral') return expr.value;
+    if (expr.type === 'TemplateLiteral') {
+      return expr.quasis.map(q => q.value.raw).join('...');
     }
-
-    // Extract boolean props (hasInfo={true})
-    const boolPropRegex = /(\w+)=\{(true|false)\}/g;
-    while ((propMatch = boolPropRegex.exec(propsStr)) !== null) {
-      field.props[propMatch[1]] = propMatch[2] === 'true';
+    if (expr.type === 'MemberExpression') {
+      return `{${memberToString(expr)}}`;
     }
-
-    // Extract JSX expression values like value={fields.xyz}
-    const exprPropRegex = /value=\{fields\.(\w+)\}/g;
-    while ((propMatch = exprPropRegex.exec(propsStr)) !== null) {
-      field.props.valueField = propMatch[1];
+    if (expr.type === 'ConditionalExpression') {
+      const cons = expr.consequent;
+      const alt = expr.alternate;
+      if (cons.type === 'StringLiteral' && alt.type === 'StringLiteral') {
+        return cons.value; // Use the truthy value as sample
+      }
+      return '{conditional}';
     }
-
-    // Extract complex value expressions (ternary for Yes/No)
-    if (propsStr.includes("? 'Yes' : 'No'")) {
-      field.props.valueType = 'boolean-text';
-    }
-
-    fields.push(field);
+    return '{expression}';
   }
-
-  return fields;
-}
-
-function extractColumnsFromJSX(content) {
-  const columns = [];
-  
-  // Split by column comments or grid-column divs
-  const columnRegex = /\{\/\*\s*Column\s*(\d+)[\s\S]*?\*\/\}\s*<div className="grid-column">([\s\S]*?)<\/div>\s*(?=\{\/\*|<\/div>)/g;
-  let match;
-
-  while ((match = columnRegex.exec(content)) !== null) {
-    const columnContent = match[2];
-    const fields = extractFieldsFromJSX(columnContent);
-    
-    columns.push({
-      name: `Column ${match[1]}`,
-      fields: fields.map(f => ({
-        label: f.props.label || '',
-        value: f.props.value || `{fields.${f.props.valueField || f.props.id}}`,
-        fieldType: f.props.fieldType || 'text',
-        editable: f.props.editable !== undefined ? f.props.editable : true,
-        hasInfo: f.props.hasInfo || false,
-        infoText: f.props.infoText || '',
-        tooltipPosition: f.props.tooltipPosition || 'top',
-        isLink: f.props.fieldType === 'link'
-      }))
-    });
-  }
-
-  return columns;
-}
-
-function extractSectionHeader(content) {
-  const headerMatch = content.match(/<SectionHeader[^>]*title="([^"]*?)"/);
-  if (headerMatch) {
-    return headerMatch[1];
-  }
-  
-  const h2Match = content.match(/<h2>([^<]*?)<\/h2>/);
-  if (h2Match) {
-    return h2Match[1];
-  }
-  
   return null;
 }
 
-function detectCardType(content) {
-  if (content.includes('card-grid')) return 'grid-card';
-  if (content.includes('table-card') || content.includes('<table')) return 'table-card';
-  if (content.includes('teaser-card')) return 'teaser-card';
-  if (content.includes('filter-inputs')) return 'filter-card';
-  return 'generic-card';
+/** Convert MemberExpression to dot-notation string */
+function memberToString(node) {
+  if (node.type === 'MemberExpression') {
+    return memberToString(node.object) + '.' + (node.property.name || node.property.value);
+  }
+  if (node.type === 'Identifier') return node.name;
+  return '?';
 }
 
-function extractTableData(content) {
-  const headers = [];
-  const thRegex = /<th[^>]*>([^<]*)<\/th>/g;
-  let match;
-  while ((match = thRegex.exec(content)) !== null) {
-    headers.push(match[1]);
+/** Get all JSX attributes as a plain object */
+function getProps(jsxElement) {
+  const props = {};
+  const opening = jsxElement.openingElement || jsxElement;
+  if (!opening.attributes) return props;
+  
+  for (const attr of opening.attributes) {
+    if (attr.type === 'JSXAttribute' && attr.name) {
+      props[attr.name.name] = getAttrValue(attr);
+    }
   }
-  return { headers };
+  return props;
 }
 
-function extractInlineFields(content) {
-  const fields = [];
-  const fieldRegex = /<div className="details-field[^"]*"[^>]*data-field-id="(\w+)"[^>]*>\s*<span className="field-label">([^<]*)<\/span>\s*<div className="field-value-container"[^>]*>\s*(?:<StatusBadge[^/]*\/?>|<span className="field-value"[^>]*>(?:<a[^>]*>)?([^<]*)|<span className="field-value"[^>]*\s*dangerouslySetInnerHTML)/gs;
-  
-  while ((match = fieldRegex.exec(content)) !== null) {
-    const id = match[1];
-    const label = match[2];
-    const rawValue = match[3] || '';
-    const isBadge = content.substring(match.index, match.index + match[0].length).includes('StatusBadge');
-    const isLink = content.substring(match.index, match.index + match[0].length).includes('<a ');
-    const hasButton = content.substring(match.index, match.index + 200).includes('brand-link-btn');
-
-    fields.push({
-      label: label.trim(),
-      value: rawValue.trim() || '–',
-      fieldType: isBadge ? 'badge' : (isLink ? 'link' : 'text'),
-      editable: false,
-      hasAction: hasButton
-    });
+/** Get JSX element name (handles JSX namespaces) */
+function getJSXName(node) {
+  if (!node) return '';
+  if (node.type === 'JSXIdentifier') return node.name;
+  if (node.type === 'JSXMemberExpression') {
+    return getJSXName(node.object) + '.' + getJSXName(node.property);
   }
-  
-  return fields;
+  return '';
 }
 
 // ============================================================
-// Screen Definition Builder
+// Component Extractors
 // ============================================================
-function generateScreenDefinition(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const fileName = path.basename(filePath, '.jsx');
-  
-  const definition = {
-    meta: {
-      source: filePath,
-      generatedAt: new Date().toISOString(),
-      component: fileName
-    },
-    sections: []
+
+/** Extract DetailsField from a JSX node */
+function extractDetailsField(jsxNode) {
+  const props = getProps(jsxNode);
+  return {
+    label: props.label || '',
+    value: props.value || `{${props.valueField || props.id || 'value'}}`,
+    fieldType: props.fieldType || 'text',
+    editable: props.editable !== undefined ? props.editable : true,
+    hasInfo: props.hasInfo || false,
+    infoText: props.infoText || '',
+    tooltipPosition: props.tooltipPosition || 'top',
+    isLink: props.fieldType === 'link',
+    hasAction: props.hasAction || false,
   };
+}
 
-  // Check for SectionHeader
-  const sectionTitle = extractSectionHeader(content);
-  if (sectionTitle) {
-    definition.sections.push({
-      type: 'section-header',
-      title: sectionTitle
-    });
-  }
+/** Extract StatusBadge from a JSX node */
+function extractStatusBadge(jsxNode) {
+  const props = getProps(jsxNode);
+  return {
+    type: 'status-badge',
+    text: props.text || props.label || props.status || 'Status',
+    variant: props.variant || props.type || 'default',
+  };
+}
 
-  // Check for card-grid layout
-  const cardType = detectCardType(content);
+/** Find grid-column divs and extract fields from each */
+function extractGridColumns(ast, source) {
+  const columns = [];
   
-  if (cardType === 'grid-card') {
-    const columns = extractColumnsFromJSX(content);
-    
-    // If no DetailsField components found, try inline field extraction
-    const allFieldsEmpty = columns.every(c => c.fields.length === 0);
-    
-    if (allFieldsEmpty) {
-      // Parse inline div-based fields (CompanyDetailsCard pattern)
-      const columnBlocks = content.split(/\{\/\*\s*Column\s*\d+/);
-      let colIndex = 0;
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      const props = getProps(nodePath.node);
       
-      for (let i = 1; i < columnBlocks.length; i++) {
-        const blockEnd = columnBlocks[i].indexOf('</div>\n\n') || columnBlocks[i].length;
-        const blockContent = columnBlocks[i].substring(0, blockEnd + 500);
-        const inlineFields = extractInlineFields(blockContent);
+      // Detect grid-column div
+      if (name === 'div' && props.className && 
+          typeof props.className === 'string' && 
+          props.className.includes('grid-column')) {
+        const column = { name: `Column ${columns.length + 1}`, fields: [] };
         
-        if (inlineFields.length > 0) {
-          colIndex++;
-          columns.push({
-            name: `Column ${colIndex}`,
-            fields: inlineFields
-          });
+        // Find all DetailsField components or inline details-field divs
+        nodePath.traverse({
+          JSXElement(childPath) {
+            const childName = getJSXName(childPath.node.openingElement.name);
+            const childProps = getProps(childPath.node);
+            
+            // Pattern 1: <DetailsField ... />
+            if (childName === 'DetailsField') {
+              column.fields.push(extractDetailsField(childPath.node));
+              childPath.skip();
+              return;
+            }
+            
+            // Pattern 2: <div className="details-field" data-field-id="xxx">
+            if (childName === 'div' && childProps.className && 
+                typeof childProps.className === 'string' &&
+                childProps.className.includes('details-field')) {
+              const field = extractInlineDetailsField(childPath.node);
+              if (field) column.fields.push(field);
+              childPath.skip();
+              return;
+            }
+          }
+        });
+        
+        if (column.fields.length > 0) {
+          columns.push(column);
+        }
+        nodePath.skip();
+      }
+    }
+  });
+  
+  return columns;
+}
+
+/** Extract field data from an inline details-field div */
+function extractInlineDetailsField(jsxNode) {
+  const props = getProps(jsxNode);
+  let label = '';
+  let value = '–';
+  let fieldType = 'text';
+  let hasAction = false;
+  
+  // Walk children to find label and value
+  function walkChildren(children) {
+    if (!children) return;
+    for (const child of children) {
+      if (child.type === 'JSXElement') {
+        const cName = getJSXName(child.openingElement.name);
+        const cProps = getProps(child);
+        
+        // <span className="field-label">
+        if (cName === 'span' && cProps.className && 
+            typeof cProps.className === 'string' &&
+            cProps.className.includes('field-label')) {
+          for (const textChild of (child.children || [])) {
+            if (textChild.type === 'JSXText') label += textChild.value.trim();
+          }
+        }
+        
+        // <span className="field-value">
+        if (cName === 'span' && cProps.className && 
+            typeof cProps.className === 'string' &&
+            cProps.className.includes('field-value')) {
+          for (const textChild of (child.children || [])) {
+            if (textChild.type === 'JSXText') value = textChild.value.trim() || value;
+            if (textChild.type === 'JSXExpressionContainer') value = '{data}';
+            if (textChild.type === 'JSXElement') {
+              const innerName = getJSXName(textChild.openingElement.name);
+              if (innerName === 'a') {
+                fieldType = 'link';
+                for (const aChild of (textChild.children || [])) {
+                  if (aChild.type === 'JSXText') value = aChild.value.trim() || value;
+                  if (aChild.type === 'JSXExpressionContainer') value = '{data}';
+                }
+              }
+            }
+          }
+        }
+        
+        // StatusBadge
+        if (cName === 'StatusBadge') {
+          fieldType = 'badge';
+          const badgeProps = getProps(child);
+          value = badgeProps.text || badgeProps.label || 'Status';
+        }
+        
+        // Action button
+        if (cName === 'button' || (cProps.className && typeof cProps.className === 'string' && cProps.className.includes('brand-link-btn'))) {
+          hasAction = true;
+        }
+        
+        // Recurse into children
+        if (child.children) walkChildren(child.children);
+      }
+    }
+  }
+  
+  walkChildren(jsxNode.children);
+  
+  if (!label) return null;
+  
+  return {
+    label,
+    value,
+    fieldType,
+    editable: false,
+    hasInfo: false,
+    infoText: '',
+    tooltipPosition: 'top',
+    isLink: fieldType === 'link',
+    hasAction,
+  };
+}
+
+/** Detect what type of card/component this is from CSS classes */
+function detectComponentType(ast, source) {
+  const types = [];
+  
+  if (source.includes('card-grid')) types.push('grid-card');
+  if (source.includes('dashboard-top-card')) types.push('top-stats-card');
+  if (source.includes('teaser-card')) types.push('teaser-card');
+  if (source.includes('<table') || source.includes('table-card')) types.push('data-table');
+  if (source.includes('filter-inputs') || source.includes('filter-bar')) types.push('filter-bar');
+  if (source.includes('more-info-details') || source.includes('<details')) types.push('collapsible-section');
+  if (source.includes('sidebar')) types.push('sidebar-nav');
+  
+  return types;
+}
+
+/** Extract section header */
+function extractSectionHeader(ast) {
+  let title = null;
+  
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      if (name === 'SectionHeader') {
+        const props = getProps(nodePath.node);
+        title = props.title || '';
+        nodePath.stop();
+      }
+      if (name === 'h2') {
+        const children = nodePath.node.children;
+        for (const child of children) {
+          if (child.type === 'JSXText') {
+            title = child.value.trim();
+          }
         }
       }
     }
+  });
+  
+  return title;
+}
 
-    definition.sections.push({
-      type: 'card',
-      layout: 'grid-4col',
-      columns: columns.filter(c => c.fields.length > 0)
-    });
-  }
+/** Extract table headers */
+function extractTableHeaders(ast) {
+  const headers = [];
+  
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      if (name === 'th') {
+        const children = nodePath.node.children;
+        for (const child of children) {
+          if (child.type === 'JSXText') {
+            const text = child.value.trim();
+            if (text) headers.push(text);
+          }
+        }
+      }
+    }
+  });
+  
+  return headers;
+}
 
-  if (cardType === 'table-card') {
-    const tableData = extractTableData(content);
-    definition.sections.push({
-      type: 'data-table',
-      headers: tableData.headers,
-      sampleRows: []
-    });
-  }
+/** Extract all component references (for App-level pages) */
+function extractComponentRefs(ast) {
+  const refs = [];
+  
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      if (name.endsWith('Card') || name.endsWith('Section') || name.endsWith('Modal') || name.endsWith('Table')) {
+        refs.push({ component: name, type: 'reference' });
+      }
+    }
+  });
+  
+  return refs;
+}
 
-  if (cardType === 'filter-card') {
-    definition.sections.push({
-      type: 'filter-bar',
-      filters: []
-    });
-  }
+/** Extract page title from h1 */
+function extractPageTitle(ast) {
+  let title = '';
+  
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      if (name === 'h1') {
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXText') {
+            title += child.value.trim();
+          }
+        }
+        nodePath.stop();
+      }
+    }
+  });
+  
+  return title;
+}
 
-  // Check for collapsible "More info"
-  if (content.includes('more-info-details') || content.includes('<details')) {
-    definition.sections.push({
-      type: 'collapsible-section',
-      label: 'More info'
-    });
-  }
-
-  return definition;
+/** Extract BackLink text */
+function extractBackLink(ast) {
+  let text = '';
+  
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      if (name === 'BackLink') {
+        const props = getProps(nodePath.node);
+        text = props.text || '';
+        nodePath.stop();
+      }
+    }
+  });
+  
+  return text;
 }
 
 // ============================================================
-// Generate for a full App component (multiple sections)
+// Main Generator
 // ============================================================
-function generateAppDefinition(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
+
+function parseFile(filePath) {
+  const source = fs.readFileSync(filePath, 'utf8');
+  
+  const ast = parser.parse(source, {
+    sourceType: 'module',
+    plugins: ['jsx', 'classProperties', 'optionalChaining', 'nullishCoalescingOperator'],
+  });
+  
+  return { ast, source };
+}
+
+function generateScreenDefinition(filePath) {
+  const { ast, source } = parseFile(filePath);
   const fileName = path.basename(filePath, '.jsx');
   
   const definition = {
@@ -249,54 +387,95 @@ function generateAppDefinition(filePath) {
       source: filePath,
       generatedAt: new Date().toISOString(),
       component: fileName,
-      type: 'page'
     },
-    page: {
-      title: '',
-      backLink: '',
-      sections: []
-    }
+    sections: [],
   };
-
-  // Extract page title
-  const titleMatch = content.match(/<h1[^>]*>([^<{]*)/);
-  if (titleMatch) {
-    definition.page.title = titleMatch[1].trim();
+  
+  // Section header
+  const sectionTitle = extractSectionHeader(ast);
+  if (sectionTitle) {
+    definition.sections.push({ type: 'section-header', title: sectionTitle });
   }
-
-  // Extract BackLink
-  const backLinkMatch = content.match(/text="([^"]*?)"/);
-  if (backLinkMatch) {
-    definition.page.backLink = backLinkMatch[1];
+  
+  // Detect types
+  const types = detectComponentType(ast, source);
+  
+  // Grid card
+  if (types.includes('grid-card')) {
+    const columns = extractGridColumns(ast, source);
+    if (columns.length > 0) {
+      definition.sections.push({
+        type: 'card',
+        layout: 'grid-4col',
+        columns: columns,
+      });
+    }
   }
-
-  // List component references
-  const componentRegex = /<(\w+(?:Card|Section|Modal))\s/g;
-  let match;
-  while ((match = componentRegex.exec(content)) !== null) {
-    definition.page.sections.push({
-      component: match[1],
-      type: 'reference'
+  
+  // Data table
+  if (types.includes('data-table')) {
+    const headers = extractTableHeaders(ast);
+    definition.sections.push({
+      type: 'data-table',
+      headers: headers,
+      sampleRows: [],
     });
   }
+  
+  // Filter bar
+  if (types.includes('filter-bar')) {
+    definition.sections.push({
+      type: 'filter-bar',
+      filters: [],
+    });
+  }
+  
+  // Collapsible section
+  if (types.includes('collapsible-section')) {
+    definition.sections.push({
+      type: 'collapsible-section',
+      label: 'More info',
+    });
+  }
+  
+  return definition;
+}
 
+function generateAppDefinition(filePath) {
+  const { ast, source } = parseFile(filePath);
+  const fileName = path.basename(filePath, '.jsx');
+  
+  const definition = {
+    meta: {
+      source: filePath,
+      generatedAt: new Date().toISOString(),
+      component: fileName,
+      type: 'page',
+    },
+    page: {
+      title: extractPageTitle(ast),
+      backLink: extractBackLink(ast),
+      sections: extractComponentRefs(ast),
+    },
+  };
+  
   return definition;
 }
 
 // ============================================================
-// CLI Entry Point
+// CLI
 // ============================================================
 function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0 || args[0] === '--help') {
     console.log(`
-Strawberry Portal — Screen Definition Generator
+Strawberry Portal — Screen Definition Generator v2 (AST)
 
 Usage:
-  node scripts/generate-screen.js <file.jsx>     Generate for a single component
-  node scripts/generate-screen.js --all           Generate for all components
-  node scripts/generate-screen.js --page <App>    Generate full page definition
+  node scripts/generate-screen.cjs <file.jsx>     Generate for a single component
+  node scripts/generate-screen.cjs --all           Generate for all components
+  node scripts/generate-screen.cjs --page <App>    Generate full page definition
 
 Output is written to figma-plugin/screens/<ComponentName>.json
     `);
@@ -312,32 +491,59 @@ Output is written to figma-plugin/screens/<ComponentName>.json
     const dirs = [
       path.resolve(__dirname, '../src/components/contract'),
       path.resolve(__dirname, '../src/components/company'),
+      path.resolve(__dirname, '../src/components/dashboard'),
     ];
 
+    let totalFiles = 0;
+    let totalFields = 0;
+
     for (const dir of dirs) {
+      if (!fs.existsSync(dir)) continue;
       const files = fs.readdirSync(dir).filter(f => f.endsWith('.jsx') && !f.includes('.figma.'));
       for (const file of files) {
         const filePath = path.join(dir, file);
-        const definition = generateScreenDefinition(filePath);
-        const outFile = path.join(outputDir, path.basename(file, '.jsx') + '.json');
-        fs.writeFileSync(outFile, JSON.stringify(definition, null, 2));
-        console.log(`✅ ${file} → ${path.basename(outFile)}`);
+        try {
+          const definition = generateScreenDefinition(filePath);
+          const outFile = path.join(outputDir, path.basename(file, '.jsx') + '.json');
+          fs.writeFileSync(outFile, JSON.stringify(definition, null, 2));
+          
+          let fieldCount = 0;
+          for (const sec of definition.sections) {
+            if (sec.columns) {
+              for (const col of sec.columns) fieldCount += col.fields.length;
+            }
+          }
+          
+          console.log(`✅ ${file} → ${path.basename(outFile)} (${fieldCount} fields, ${definition.sections.length} sections)`);
+          totalFiles++;
+          totalFields += fieldCount;
+        } catch (err) {
+          console.error(`❌ ${file}: ${err.message}`);
+        }
       }
     }
 
-    // Also generate for App components
+    // App components
     const appFiles = [
       path.resolve(__dirname, '../src/components/ContractApp.jsx'),
       path.resolve(__dirname, '../src/components/CompanyApp.jsx'),
+      path.resolve(__dirname, '../src/components/DashboardApp.jsx'),
     ];
     for (const filePath of appFiles) {
       if (fs.existsSync(filePath)) {
-        const definition = generateAppDefinition(filePath);
-        const outFile = path.join(outputDir, path.basename(filePath, '.jsx') + '.json');
-        fs.writeFileSync(outFile, JSON.stringify(definition, null, 2));
-        console.log(`✅ ${path.basename(filePath)} → ${path.basename(outFile)}`);
+        try {
+          const definition = generateAppDefinition(filePath);
+          const outFile = path.join(outputDir, path.basename(filePath, '.jsx') + '.json');
+          fs.writeFileSync(outFile, JSON.stringify(definition, null, 2));
+          console.log(`✅ ${path.basename(filePath)} → ${path.basename(outFile)} (page)`);
+          totalFiles++;
+        } catch (err) {
+          console.error(`❌ ${path.basename(filePath)}: ${err.message}`);
+        }
       }
     }
+
+    console.log(`\nDone: ${totalFiles} files, ${totalFields} fields extracted`);
   } else {
     const filePath = path.resolve(args[0]);
     if (!fs.existsSync(filePath)) {

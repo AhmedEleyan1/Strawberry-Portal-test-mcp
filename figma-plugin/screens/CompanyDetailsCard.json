@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/CompanyDetailsCard.jsx",
-    "generatedAt": "2026-06-05T11:03:36.237Z",
+    "generatedAt": "2026-06-07T08:23:27.740Z",
     "component": "CompanyDetailsCard"
   },
   "sections": [
@@ -14,23 +14,35 @@
           "fields": [
             {
               "label": "Name",
-              "value": "{state.companyName}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             },
             {
               "label": "Customer ID",
-              "value": "{state.customerId || '70194837'}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             },
             {
               "label": "National Reg. No.",
-              "value": "{state.nationalRegNo || '996340333'}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             }
           ]
@@ -43,6 +55,10 @@
               "value": "Yes",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             },
             {
@@ -50,13 +66,21 @@
               "value": "Yes",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             },
             {
               "label": "Covered By Central Agreement",
-              "value": "{state.coveredByCentralAgreement}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             }
           ]
@@ -66,23 +90,35 @@
           "fields": [
             {
               "label": "Credit rating",
-              "value": "–",
+              "value": "Status",
               "fieldType": "badge",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             },
             {
               "label": "Credit rating last checked",
-              "value": "{state.creditRatingLastChecked}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
-              "hasAction": false
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": true
             },
             {
               "label": "Invoice Conditions",
               "value": "Continuous invoicing allowed",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             }
           ]
@@ -92,16 +128,24 @@
           "fields": [
             {
               "label": "Payment terms",
-              "value": "{state.paymentTerms === 'None' ? 'None' : state.paymentTerms}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
-              "hasAction": false
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": true
             },
             {
               "label": "Estimated invoice date",
-              "value": "{state.estimatedInvoiceDate}",
+              "value": "{data}",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             },
             {
@@ -109,6 +153,10 @@
               "value": "Strawberry Holding AS",
               "fieldType": "link",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": true,
               "hasAction": false
             },
             {
@@ -116,6 +164,151 @@
               "value": "00018589",
               "fieldType": "text",
               "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 5",
+          "fields": [
+            {
+              "label": "Electronic invoice address",
+              "value": "965920358",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Invoice email address",
+              "value": "kjetil.furset@choice.no",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Billing address",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 6",
+          "fields": [
+            {
+              "label": "Invoice fee",
+              "value": "No",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "VAT number",
+              "value": "NO965920358MVA",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Department",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 7",
+          "fields": [
+            {
+              "label": "Visiting address",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Duns number",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Status (D&B)",
+              "value": "Active",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 8",
+          "fields": [
+            {
+              "label": "Owner",
+              "value": "Migration user",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Description",
+              "value": "–",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
               "hasAction": false
             }
           ]

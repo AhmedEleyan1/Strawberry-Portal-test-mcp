@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/PaymentInfoCard.jsx",
-    "generatedAt": "2026-06-05T11:03:36.235Z",
+    "generatedAt": "2026-06-07T08:23:27.716Z",
     "component": "PaymentInfoCard"
   },
   "sections": [
@@ -24,7 +24,8 @@
               "hasInfo": true,
               "infoText": "Determines the method by which the client will settle billing amounts. Synced from Salesforce.",
               "tooltipPosition": "right",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Contracted Payment Terms",
@@ -34,17 +35,19 @@
               "hasInfo": true,
               "infoText": "Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Contracted Invoice Fee",
-              "value": "{fields.contracted_invoice_fee}",
+              "value": "Yes",
               "fieldType": "text",
               "editable": false,
               "hasInfo": true,
               "infoText": "Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             }
           ]
         },
@@ -59,7 +62,8 @@
               "hasInfo": true,
               "infoText": "Under what conditions is the creation of invoices allowed. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Invoice Frequency",
@@ -69,7 +73,8 @@
               "hasInfo": true,
               "infoText": "Determines how often invoice cycles are generated automatically. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Invoice Reference",
@@ -79,7 +84,8 @@
               "hasInfo": true,
               "infoText": "Mandatory customer PO or reference number required on invoices. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             }
           ]
         },
@@ -94,7 +100,8 @@
               "hasInfo": true,
               "infoText": "Determines which legal entity must receive the invoices. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Account Detail to Invoice",
@@ -104,7 +111,8 @@
               "hasInfo": true,
               "infoText": "The specific account entity linked for billing. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": true
+              "isLink": true,
+              "hasAction": false
             },
             {
               "label": "Other Payment Details",
@@ -114,7 +122,8 @@
               "hasInfo": true,
               "infoText": "Specific notes regarding custom payment arrangements. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             }
           ]
         },
@@ -129,7 +138,8 @@
               "hasInfo": true,
               "infoText": "Defines if payment conditions should be inherited from parent account. Synced from Salesforce.",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             }
           ]
         }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/ContractDetailsCard.jsx",
-    "generatedAt": "2026-06-05T11:03:36.225Z",
+    "generatedAt": "2026-06-07T08:23:27.708Z",
     "component": "ContractDetailsCard"
   },
   "sections": [
@@ -20,7 +20,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Contract type",
@@ -30,7 +31,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Number",
@@ -40,7 +42,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             }
           ]
         },
@@ -55,7 +58,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Cancellation policy",
@@ -65,7 +69,46 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "Status",
+              "value": "Status",
+              "fieldType": "badge",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Loyalty points eligible",
+              "value": "{fields.loyalty_eligible}",
+              "fieldType": "select",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Loyalty points benefit eligible",
+              "value": "{fields.loyalty_benefit_eligible}",
+              "fieldType": "select",
+              "editable": true,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
             }
           ]
         },
@@ -80,7 +123,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Commission",
@@ -90,7 +134,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": false
+              "isLink": false,
+              "hasAction": false
             },
             {
               "label": "Account contract owner",
@@ -100,7 +145,8 @@
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
-              "isLink": true
+              "isLink": true,
+              "hasAction": false
             }
           ]
         }

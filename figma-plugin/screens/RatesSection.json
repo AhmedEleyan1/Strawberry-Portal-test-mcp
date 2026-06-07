@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/RatesSection.jsx",
-    "generatedAt": "2026-06-05T11:03:36.236Z",
+    "generatedAt": "2026-06-07T08:23:27.722Z",
     "component": "RatesSection"
   },
   "sections": [
@@ -18,6 +18,10 @@
         "Discount"
       ],
       "sampleRows": []
+    },
+    {
+      "type": "filter-bar",
+      "filters": []
     }
   ]
 }
