@@ -944,22 +944,151 @@ async function buildScreen(definition) {
   return root;
 }
 
+// ============================================================
+// Build: Full Page (sidebar + header + content area)
+// ============================================================
+async function buildFullPage(definition) {
+  await loadFonts();
+  await discoverVariables();
+  await discoverTextStyles();
+
+  var page = definition.page || {};
+  var pageWidth = TOKENS.layout.contentWidth + TOKENS.layout.sidebarWidth;
+  var pageHeight = 900;
+
+  // Root container (horizontal: sidebar | main)
+  var root = figma.createFrame();
+  root.name = (definition.meta && definition.meta.component) || "Full Page";
+  root.layoutMode = "HORIZONTAL";
+  root.primaryAxisSizingMode = "FIXED";
+  root.counterAxisSizingMode = "FIXED";
+  root.resize(pageWidth, pageHeight);
+  root.fills = solidFill(TOKENS.colors.varmGrey, "varmGrey");
+  root.clipsContent = true;
+
+  // Sidebar
+  if (page.sidebar) {
+    var sidebar = await buildSidebarNav(page.sidebar);
+    sidebar.resize(TOKENS.layout.sidebarWidth, pageHeight);
+    root.appendChild(sidebar);
+  }
+
+  // Main area (vertical: header + content)
+  var main = figma.createFrame();
+  main.name = "main-area";
+  main.layoutMode = "VERTICAL";
+  main.primaryAxisSizingMode = "FIXED";
+  main.counterAxisSizingMode = "FIXED";
+  main.resize(TOKENS.layout.contentWidth, pageHeight);
+  main.fills = [];
+
+  // Header
+  if (page.header) {
+    var headerNode = await buildTopHeader(page.header);
+    main.appendChild(headerNode);
+    headerNode.layoutSizingHorizontal = "FILL";
+  }
+
+  // Content scroll area
+  var content = figma.createFrame();
+  content.name = "content-area";
+  content.layoutMode = "VERTICAL";
+  content.itemSpacing = 16;
+  content.paddingTop = 24;
+  content.paddingBottom = 32;
+  content.paddingLeft = content.paddingRight = 24;
+  content.primaryAxisSizingMode = "AUTO";
+  content.counterAxisSizingMode = "AUTO";
+  content.fills = [];
+
+  // Back link
+  if (page.backLink) {
+    var backText = await buildText("← " + page.backLink, 14, "Regular", TOKENS.colors.textLink, "textLink", "body");
+    backText.name = "Back Link";
+    content.appendChild(backText);
+  }
+
+  // Page title
+  if (page.title) {
+    var titleText = await buildText(page.title, 24, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+    titleText.name = "Page Title";
+    content.appendChild(titleText);
+  }
+
+  // Content sections
+  var contentSections = (page.content && page.content.children) || page.sections || [];
+  for (var i = 0; i < contentSections.length; i++) {
+    var sec = contentSections[i];
+    var built = await buildSectionNode(sec);
+    if (built) {
+      content.appendChild(built);
+      built.layoutSizingHorizontal = "FILL";
+    }
+  }
+
+  main.appendChild(content);
+  content.layoutSizingHorizontal = "FILL";
+
+  root.appendChild(main);
+
+  root.x = Math.round(figma.viewport.center.x - pageWidth / 2);
+  root.y = Math.round(figma.viewport.center.y - pageHeight / 2);
+  figma.currentPage.appendChild(root);
+  figma.viewport.scrollAndZoomIntoView([root]);
+
+  return root;
+}
+
+// Helper: build a single section node by type
+async function buildSectionNode(sec) {
+  if (!sec || !sec.type) return null;
+
+  if (sec.type === "section-header") {
+    var h = await buildText(sec.title, 20, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+    h.name = "Section Header";
+    return h;
+  }
+  if (sec.type === "back-link") {
+    var bl = await buildText("← " + (sec.text || "Back"), 14, "Regular", TOKENS.colors.textLink, "textLink", "body");
+    bl.name = "Back Link";
+    return bl;
+  }
+  if (sec.type === "page-title") {
+    var pt = await buildText(sec.text || "Page", 24, "Bold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+    pt.name = "Page Title";
+    return pt;
+  }
+  if (sec.type === "card" && sec.layout === "grid-4col") return await buildGridCard(sec);
+  if (sec.type === "data-table") return await buildDataTable(sec);
+  if (sec.type === "top-stats-card") return await buildTopStatsCard(sec);
+  if (sec.type === "status-badge") return await buildStatusBadge(sec);
+  if (sec.type === "filter-bar") return await buildFilterBar(sec);
+  if (sec.type === "teaser-card") return await buildTeaserCard(sec);
+  if (sec.type === "sidebar-nav") return await buildSidebarNav(sec);
+  if (sec.type === "top-header") return await buildTopHeader(sec);
+  if (sec.type === "collapsible-section") return await buildCollapsibleSection(sec);
+
+  console.log("Unknown section type: " + sec.type);
+  return null;
+}
+
 // === MAIN: Show UI and listen for messages ===
 figma.showUI(__html__, { width: 420, height: 380 });
 
 figma.ui.onmessage = function(msg) {
   if (msg.type === "build") {
     buildScreen(msg.definition).then(function() {
-      var count = 0;
       var sections = msg.definition.sections || [];
-      for (var i = 0; i < sections.length; i++) {
-        if (sections[i].columns) {
-          for (var c = 0; c < sections[i].columns.length; c++) {
-            count += (sections[i].columns[c].fields || []).length;
-          }
-        }
-      }
-      figma.ui.postMessage({ type: "status", text: "Done! Built " + count + " fields.", level: "success" });
+      figma.ui.postMessage({ type: "status", text: "Done! Built " + sections.length + " sections.", level: "success" });
+    }).catch(function(err) {
+      figma.ui.postMessage({ type: "status", text: "Error: " + err.message, level: "error" });
+    });
+  }
+  if (msg.type === "build-page") {
+    buildFullPage(msg.definition).then(function() {
+      var page = msg.definition.page || {};
+      var count = (page.content && page.content.children || page.sections || []).length;
+      figma.ui.postMessage({ type: "status", text: "Done! Full page built with " + count + " content sections.", level: "success" });
     }).catch(function(err) {
       figma.ui.postMessage({ type: "status", text: "Error: " + err.message, level: "error" });
     });

@@ -4,39 +4,58 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Inter, system-ui, sans-serif; padding: 16px; background: #fff; color: #000; }
-    h2 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-    p { font-size: 11px; color: #71706F; margin-bottom: 12px; line-height: 1.4; }
+    h2 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { font-size: 11px; color: #71706F; margin-bottom: 12px; line-height: 1.4; }
     textarea {
-      width: 100%; height: 200px; border: 1px solid #D8D4D0; border-radius: 6px;
+      width: 100%; height: 180px; border: 1px solid #D8D4D0; border-radius: 6px;
       padding: 10px; font-family: 'SF Mono', monospace; font-size: 11px;
       resize: vertical; outline: none;
     }
     textarea:focus { border-color: #5A0032; }
-    .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 10px; }
     button {
-      flex: 1; padding: 8px 16px; border-radius: 6px; font-size: 12px;
+      flex: 1; padding: 8px 12px; border-radius: 6px; font-size: 11px;
       font-weight: 500; cursor: pointer; border: none;
     }
     .btn-primary { background: #5A0032; color: #fff; }
     .btn-primary:hover { background: #3d0022; }
+    .btn-page { background: #2D8541; color: #fff; }
+    .btn-page:hover { background: #1e6330; }
     .btn-secondary { background: #F7F5F3; color: #000; border: 1px solid #D8D4D0; }
     .btn-secondary:hover { background: #EBE9E7; }
     .status { font-size: 11px; margin-top: 8px; padding: 6px 10px; border-radius: 4px; display: none; }
     .status.error { display: block; background: #FDF0EF; color: #d32f2f; }
     .status.success { display: block; background: rgba(45,133,65,0.1); color: #2D8541; }
+    .type-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; margin-bottom: 4px; }
+    .type-badge { font-size: 9px; padding: 2px 6px; border-radius: 10px; background: #F7F5F3; color: #71706F; }
   </style>
 </head>
 <body>
   <h2>Strawberry Screen Builder</h2>
-  <p>Paste a screen definition JSON below, or use "Generate All" to build from the last generated screens.</p>
+  <p class="subtitle">Paste a screen definition JSON. Supports 12 section types:</p>
+  <div class="type-badges">
+    <span class="type-badge">section-header</span>
+    <span class="type-badge">card/grid-4col</span>
+    <span class="type-badge">data-table</span>
+    <span class="type-badge">top-stats-card</span>
+    <span class="type-badge">status-badge</span>
+    <span class="type-badge">filter-bar</span>
+    <span class="type-badge">teaser-card</span>
+    <span class="type-badge">sidebar-nav</span>
+    <span class="type-badge">top-header</span>
+    <span class="type-badge">collapsible-section</span>
+    <span class="type-badge">back-link</span>
+    <span class="type-badge">page-title</span>
+  </div>
   
   <textarea id="json-input" placeholder='Paste screen definition JSON here...
-  
-Or click "Load Example" to see the format.'></textarea>
+
+Or click "Examples" to see the format.'></textarea>
 
   <div class="btn-row">
-    <button class="btn-primary" id="btn-build">Build in Figma</button>
-    <button class="btn-secondary" id="btn-example">Load Example</button>
+    <button class="btn-primary" id="btn-build">Build Section</button>
+    <button class="btn-page" id="btn-page">Build Full Page</button>
+    <button class="btn-secondary" id="btn-example">Examples ▾</button>
   </div>
   
   <div id="status" class="status"></div>
@@ -50,50 +69,105 @@ Or click "Load Example" to see the format.'></textarea>
       statusEl.className = 'status ' + type;
     }
 
+    // Build Section (individual component)
     document.getElementById('btn-build').addEventListener('click', function() {
       var text = inputEl.value.trim();
-      if (!text) {
-        showStatus('Please paste a screen definition JSON.', 'error');
-        return;
-      }
+      if (!text) { showStatus('Please paste JSON.', 'error'); return; }
       try {
-        var definition = JSON.parse(text);
+        var def = JSON.parse(text);
         showStatus('Building...', 'success');
-        parent.postMessage({ pluginMessage: { type: 'build', definition: definition } }, '*');
-      } catch (e) {
-        showStatus('Invalid JSON: ' + e.message, 'error');
-      }
+        parent.postMessage({ pluginMessage: { type: 'build', definition: def } }, '*');
+      } catch (e) { showStatus('Invalid JSON: ' + e.message, 'error'); }
     });
 
-    document.getElementById('btn-example').addEventListener('click', function() {
-      var example = {
+    // Build Full Page (sidebar + header + content)
+    document.getElementById('btn-page').addEventListener('click', function() {
+      var text = inputEl.value.trim();
+      if (!text) { showStatus('Please paste a full-page JSON.', 'error'); return; }
+      try {
+        var def = JSON.parse(text);
+        if (!def.page) { showStatus('JSON must have a "page" property for full-page mode.', 'error'); return; }
+        showStatus('Building full page...', 'success');
+        parent.postMessage({ pluginMessage: { type: 'build-page', definition: def } }, '*');
+      } catch (e) { showStatus('Invalid JSON: ' + e.message, 'error'); }
+    });
+
+    // Example selector
+    var exampleIndex = 0;
+    var examples = [
+      // Example 1: Grid Card
+      {
         "meta": { "component": "ExampleCard" },
         "sections": [
-          { "type": "section-header", "title": "Example Section" },
-          {
-            "type": "card",
-            "layout": "grid-4col",
-            "columns": [
-              {
-                "name": "Column 1",
-                "fields": [
-                  { "label": "Field Name", "value": "Field Value", "hasInfo": true, "infoText": "Tooltip text" },
-                  { "label": "Another Field", "value": "Another Value" }
-                ]
-              },
-              {
-                "name": "Column 2",
-                "fields": [
-                  { "label": "Status", "value": "Active", "fieldType": "badge" },
-                  { "label": "Link Field", "value": "Click me", "isLink": true }
-                ]
-              }
-            ]
-          }
+          { "type": "section-header", "title": "Payment Information" },
+          { "type": "card", "layout": "grid-4col", "columns": [
+            { "name": "Column 1", "fields": [
+              { "label": "Payment Type", "value": "Credit Card", "hasInfo": true, "infoText": "Payment method" },
+              { "label": "Terms", "value": "30 days" }
+            ]},
+            { "name": "Column 2", "fields": [
+              { "label": "Status", "value": "Active", "fieldType": "badge" },
+              { "label": "Invoice", "value": "View", "isLink": true }
+            ]}
+          ]}
         ]
-      };
-      inputEl.value = JSON.stringify(example, null, 2);
-      showStatus('Example loaded. Click "Build in Figma" to create it.', 'success');
+      },
+      // Example 2: Full Page
+      {
+        "meta": { "component": "ContractPage", "type": "full-page" },
+        "page": {
+          "title": "Contract & Company Details",
+          "backLink": "Back to contracts",
+          "sidebar": {
+            "items": [
+              { "label": "Dashboard", "active": false },
+              { "label": "Contracts", "active": true },
+              { "label": "Guests", "active": false }
+            ]
+          },
+          "header": { "logoText": "Strawberry Portal", "navItems": [{ "label": "Help" }, { "label": "Settings" }] },
+          "sections": [
+            { "type": "section-header", "title": "Contract Details" },
+            { "type": "card", "layout": "grid-4col", "columns": [
+              { "name": "Col 1", "fields": [{ "label": "Agreement", "value": "Standard" }] },
+              { "name": "Col 2", "fields": [{ "label": "Status", "value": "Active", "fieldType": "badge" }] }
+            ]},
+            { "type": "collapsible-section", "label": "More info" }
+          ]
+        }
+      },
+      // Example 3: Dashboard
+      {
+        "meta": { "component": "DashboardPage", "type": "full-page" },
+        "page": {
+          "title": "Dashboard",
+          "sidebar": {
+            "items": [
+              { "label": "Dashboard", "active": true },
+              { "label": "Contracts" },
+              { "label": "Guests" }
+            ]
+          },
+          "header": { "logoText": "Strawberry Portal" },
+          "sections": [
+            { "type": "top-stats-card", "stats": [
+              { "label": "Arrivals", "count": "22", "icon": "check-in", "iconColor": "#2D8541", "iconBg": "rgba(45,133,65,0.1)", "progressColor": "#2D8541", "progressPercent": 50, "subtitle": "22 of 44 remaining" },
+              { "label": "Departures", "count": "44", "icon": "check-out", "iconColor": "#C52924", "iconBg": "rgba(197,41,36,0.1)", "progressColor": "#C52924", "progressPercent": 42, "subtitle": "32 of 76 remaining" }
+            ]},
+            { "type": "filter-bar", "filters": [
+              { "label": "Rate type", "value": "All", "inputType": "select" },
+              { "label": "Period", "value": "2024-10-18 – 2024-10-25", "inputType": "static" }
+            ]}
+          ]
+        }
+      }
+    ];
+
+    document.getElementById('btn-example').addEventListener('click', function() {
+      inputEl.value = JSON.stringify(examples[exampleIndex], null, 2);
+      var names = ['Grid Card', 'Full Page', 'Dashboard'];
+      showStatus('Loaded: ' + names[exampleIndex] + ' (click again for next)', 'success');
+      exampleIndex = (exampleIndex + 1) % examples.length;
     });
 
     window.onmessage = function(event) {
