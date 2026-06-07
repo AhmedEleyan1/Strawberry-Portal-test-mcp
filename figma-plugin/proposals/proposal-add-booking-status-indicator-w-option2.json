@@ -1,0 +1,18 @@
+{
+  "$schema": "../screens/screen-definition.schema.json",
+  "meta": {
+    "type": "design-proposal",
+    "ticket": "Add booking status indicator with action button",
+    "option": 2,
+    "optionName": "Color Strip",
+    "generatedAt": "2026-06-07T15:11:38.953Z"
+  },
+  "sections": [
+    {
+      "type": "card-heading-with-action",
+      "title": "Booking",
+      "accentLine": true,
+      "accentColor": "#2D8541"
+    }
+  ]
+}

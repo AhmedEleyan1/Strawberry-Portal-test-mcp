@@ -1,0 +1,28 @@
+{
+  "$schema": "../screens/screen-definition.schema.json",
+  "meta": {
+    "type": "design-proposal",
+    "ticket": "Add booking status indicator with action button",
+    "option": 1,
+    "optionName": "Badge",
+    "generatedAt": "2026-06-07T15:11:38.952Z"
+  },
+  "sections": [
+    {
+      "type": "card",
+      "layout": "grid-2col",
+      "columns": [
+        {
+          "name": "Info",
+          "fields": [
+            {
+              "label": "Status",
+              "value": "Confirmed",
+              "fieldType": "badge"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

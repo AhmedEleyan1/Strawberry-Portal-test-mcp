@@ -1,0 +1,16 @@
+{
+  "$schema": "../screens/screen-definition.schema.json",
+  "meta": {
+    "type": "design-proposal",
+    "ticket": "Add booking status indicator with action button",
+    "option": 3,
+    "optionName": "Top Banner",
+    "generatedAt": "2026-06-07T15:11:38.954Z"
+  },
+  "sections": [
+    {
+      "type": "section-header",
+      "title": "✅ Booking Confirmed — #NO827181777289"
+    }
+  ]
+}
