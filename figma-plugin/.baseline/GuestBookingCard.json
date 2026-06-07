@@ -1,0 +1,157 @@
+{
+  "$schema": "./screen-definition.schema.json",
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/dashboard/GuestBookingCard.jsx",
+    "generatedAt": "2026-06-07T15:02:53.434Z",
+    "component": "GuestBookingCard"
+  },
+  "sections": [
+    {
+      "type": "card-heading-with-action",
+      "title": "Accommodation",
+      "icon": "accommodation",
+      "accentLine": true,
+      "accentColor": "#960014",
+      "action": {
+        "label": "Open in Mews",
+        "componentRef": "buttons/primary/small",
+        "properties": {
+          "Label": "Open in Mews",
+          "Icon right": true,
+          "Icon left": false
+        },
+        "iconRef": "icons/arrowOut"
+      }
+    },
+    {
+      "type": "booking-meta",
+      "bookingNumber": "{bookingNumber}",
+      "source": "{source}"
+    },
+    {
+      "type": "card",
+      "layout": "grid-4col",
+      "columns": [
+        {
+          "name": "Column 1",
+          "fields": [
+            {
+              "label": "Check in",
+              "value": "{checkIn}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Guest count",
+              "value": "{guestCount}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Room",
+              "value": "{room}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 2",
+          "fields": [
+            {
+              "label": "Check out",
+              "value": "{checkOut}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Room category",
+              "value": "{roomCategory}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Rate",
+              "value": "{rate}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 3",
+          "fields": [
+            {
+              "label": "Room status",
+              "value": "{roomStatus}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Reservation created on",
+              "value": "{reservationCreated}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        },
+        {
+          "name": "Column 4",
+          "fields": [
+            {
+              "label": "Products",
+              "value": "{products}",
+              "fieldType": "text",
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "./screen-definition.schema.json",
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/dashboard/DashboardTopCard.jsx",
+    "generatedAt": "2026-06-07T15:02:53.430Z",
+    "component": "DashboardTopCard"
+  },
+  "sections": [
+    {
+      "type": "top-stats-card",
+      "stats": [
+        {
+          "label": "Arrivals",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "Arrivals",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "Departures",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "Stayovers",
+          "value": "{value}",
+          "hasProgress": true
+        },
+        {
+          "label": "In-stay Visits",
+          "value": "{value}",
+          "hasProgress": true
+        }
+      ],
+      "extras": [
+        {
+          "label": "Early check ins",
+          "value": "{value}"
+        },
+        {
+          "label": "Late check outs",
+          "value": "{value}"
+        },
+        {
+          "label": "No Show to process",
+          "value": "{value}"
+        }
+      ]
+    }
+  ]
+}

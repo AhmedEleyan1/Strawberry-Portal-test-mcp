@@ -1,0 +1,27 @@
+{
+  "$schema": "./screen-definition.schema.json",
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/CompanyApp.jsx",
+    "generatedAt": "2026-06-07T15:02:53.438Z",
+    "component": "CompanyApp",
+    "type": "page"
+  },
+  "page": {
+    "title": "",
+    "backLink": "Back to Companies & Rates",
+    "sections": [
+      {
+        "component": "CompanyDetailsCard",
+        "type": "reference"
+      },
+      {
+        "component": "ContractsSection",
+        "type": "reference"
+      },
+      {
+        "component": "PaymentTermsModal",
+        "type": "reference"
+      }
+    ]
+  }
+}

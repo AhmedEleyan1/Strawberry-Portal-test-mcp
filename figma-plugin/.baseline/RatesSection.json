@@ -1,0 +1,28 @@
+{
+  "$schema": "./screen-definition.schema.json",
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/RatesSection.jsx",
+    "generatedAt": "2026-06-07T15:02:53.405Z",
+    "component": "RatesSection"
+  },
+  "sections": [
+    {
+      "type": "section-header",
+      "title": "Rates"
+    },
+    {
+      "type": "data-table",
+      "headers": [
+        "Product",
+        "Rate code",
+        "Price",
+        "Discount"
+      ],
+      "sampleRows": []
+    },
+    {
+      "type": "filter-bar",
+      "filters": []
+    }
+  ]
+}

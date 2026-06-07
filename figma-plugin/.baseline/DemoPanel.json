@@ -1,0 +1,24 @@
+{
+  "$schema": "./screen-definition.schema.json",
+  "meta": {
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/DemoPanel.jsx",
+    "generatedAt": "2026-06-07T15:02:53.422Z",
+    "component": "DemoPanel"
+  },
+  "sections": [
+    {
+      "type": "collapsible-section",
+      "label": "Testing & Demo Panel",
+      "controls": [
+        {
+          "label": "Covered By Central Agreement",
+          "controlType": "select"
+        },
+        {
+          "label": "Next Credit Rating Outcome",
+          "controlType": "select"
+        }
+      ]
+    }
+  ]
+}
