@@ -30,6 +30,37 @@
       "figmaKey": "3efcbd4c35f4d6235e49e759c0bfb79d6828270d",
       "figmaNodeId": "5945:46685",
       "figmaName": "tooltip btn"
+    },
+    "buttons": {
+      "figmaName": "Buttons",
+      "componentSetKey": "20e403be798f7a9d7300a0d6184e71655b4c02c0",
+      "reactCSS": ".btn-primary-action",
+      "properties": ["Label", "Icon right", "Icon left"],
+      "variants": {
+        "primary/small": "310bcca2715e0b81e21cd58fc67af44339c8c847",
+        "secondary/small": "094db23ddfe841a00636bf2b03dc828d37dec762",
+        "link/small": "c2c80910b7ac372457a46ca787d25449a83ec308",
+        "link/medium": "aacea6f05d7f25db1672cf4a0d3dbead1f1bf119"
+      }
+    },
+    "icons": {
+      "figmaName": "Icons",
+      "variants": {
+        "arrowOut": "6a8b08631d23d998659f26baea327d926eab8c03",
+        "arrowDown": "8c4ad3c79e078ccef0ef29ddc9867569cee14544",
+        "arrowLeft": "9ad9f3db0beebc8878f43cb6c098c13d9117bc7e",
+        "arrowRight": "2f36f5fcd8c0dec85bb271b7fb55cb8d55ac63c8",
+        "arrowUp": "2f0041e1ba23729cc61404681adcdb136a39919d",
+        "chevronDown": "1724cadae6626d0d78ccbd84b0ee98b9c59e71f6",
+        "chevronLeft": "cafe9b417b8dd036ec99f1d331735f6d3baf124c",
+        "chevronRight": "0e6e35a3b62d8ba873a5490440e5a09dd3a1336c",
+        "accommodation": "2a05cf3bfe29d3b2fd5c52d533ad6cea5d5a1f61"
+      }
+    },
+    "cardHeading": {
+      "figmaKey": "62311d193bef1cb4a08dae085bf58ef2ee704f4e",
+      "figmaName": "Card Heading",
+      "reactCSS": ".booking-card-heading"
     }
   },
 

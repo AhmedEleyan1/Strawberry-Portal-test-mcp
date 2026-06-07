@@ -1,7 +1,8 @@
 {
+  "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/PaymentInfoCard.jsx",
-    "generatedAt": "2026-06-07T08:23:27.716Z",
+    "generatedAt": "2026-06-07T14:03:28.277Z",
     "component": "PaymentInfoCard"
   },
   "sections": [

@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "screen-definition.schema.json",
+  "title": "Screen Definition",
+  "description": "Schema for Figma plugin screen definition JSON files used by PortalMCP.",
+  "type": "object",
+  "required": ["meta", "sections"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to this schema for IDE autocompletion."
+    },
+    "meta": {
+      "type": "object",
+      "required": ["source", "component"],
+      "properties": {
+        "source": { "type": "string", "description": "Path to the React source file." },
+        "generatedAt": { "type": "string", "format": "date-time", "description": "ISO timestamp of generation." },
+        "component": { "type": "string", "description": "React component name." }
+      },
+      "additionalProperties": false
+    },
+    "sections": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/section" },
+      "minItems": 1,
+      "description": "Ordered list of sections to render."
+    }
+  },
+  "additionalProperties": false,
+
+  "definitions": {
+    "section": {
+      "type": "object",
+      "required": ["type"],
+      "oneOf": [
+        { "$ref": "#/definitions/sectionHeader" },
+        { "$ref": "#/definitions/cardHeadingWithAction" },
+        { "$ref": "#/definitions/card" },
+        { "$ref": "#/definitions/bookingMeta" },
+        { "$ref": "#/definitions/primaryActionButton" },
+        { "$ref": "#/definitions/dataTable" },
+        { "$ref": "#/definitions/topStatsCard" },
+        { "$ref": "#/definitions/filterBar" },
+        { "$ref": "#/definitions/teaserCard" },
+        { "$ref": "#/definitions/sidebarNav" },
+        { "$ref": "#/definitions/topHeader" },
+        { "$ref": "#/definitions/collapsibleSection" },
+        { "$ref": "#/definitions/statusBadgeSection" }
+      ]
+    },
+
+    "sectionHeader": {
+      "type": "object",
+      "required": ["type", "title"],
+      "properties": {
+        "type": { "const": "section-header" },
+        "title": { "type": "string" },
+        "icon": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "cardHeadingWithAction": {
+      "type": "object",
+      "required": ["type", "title"],
+      "properties": {
+        "type": { "const": "card-heading-with-action" },
+        "title": { "type": "string" },
+        "icon": { "type": "string" },
+        "accentLine": { "type": "boolean" },
+        "accentColor": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "action": { "$ref": "#/definitions/actionButton" }
+      },
+      "additionalProperties": false
+    },
+
+    "actionButton": {
+      "type": "object",
+      "required": ["label"],
+      "properties": {
+        "label": { "type": "string" },
+        "componentRef": { "type": "string", "description": "Named registry ref, e.g. 'buttons/primary/small'." },
+        "componentKey": { "type": "string", "description": "Raw Figma component key (legacy)." },
+        "componentSetKey": { "type": "string" },
+        "componentName": { "type": "string" },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "Label": { "type": "string" },
+            "Icon right": { "type": "boolean" },
+            "Icon left": { "type": "boolean" }
+          },
+          "additionalProperties": true
+        },
+        "iconRef": { "type": "string", "description": "Named icon ref, e.g. 'icons/arrowOut'." },
+        "iconRightKey": { "type": "string", "description": "Raw Figma icon key (legacy)." },
+        "iconRightName": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "card": {
+      "type": "object",
+      "required": ["type", "layout", "columns"],
+      "properties": {
+        "type": { "const": "card" },
+        "layout": { "type": "string", "enum": ["grid-4col", "grid-3col", "grid-2col"] },
+        "columns": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/column" },
+          "minItems": 1
+        },
+        "action": { "$ref": "#/definitions/actionButton" }
+      },
+      "additionalProperties": false
+    },
+
+    "column": {
+      "type": "object",
+      "required": ["name", "fields"],
+      "properties": {
+        "name": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/field" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "field": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "type": "string" },
+        "value": { "type": "string" },
+        "fieldType": {
+          "type": "string",
+          "enum": ["text", "number", "select", "badge", "link", "date", "email", "phone", "currency"]
+        },
+        "editable": { "type": "boolean" },
+        "hasInfo": { "type": "boolean" },
+        "infoText": { "type": "string" },
+        "tooltipPosition": { "type": "string", "enum": ["top", "right", "bottom", "left"] },
+        "isLink": { "type": "boolean" },
+        "hasAction": { "type": "boolean" },
+        "actionLabel": { "type": "string" },
+        "actionIcon": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "badgeVariant": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "bookingMeta": {
+      "type": "object",
+      "required": ["type", "bookingNumber"],
+      "properties": {
+        "type": { "const": "booking-meta" },
+        "bookingNumber": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "primaryActionButton": {
+      "type": "object",
+      "required": ["type", "label"],
+      "properties": {
+        "type": { "const": "primary-action-button" },
+        "label": { "type": "string" },
+        "componentRef": { "type": "string" },
+        "componentKey": { "type": "string" },
+        "componentSetKey": { "type": "string" },
+        "componentName": { "type": "string" },
+        "properties": { "type": "object", "additionalProperties": true },
+        "iconRef": { "type": "string" },
+        "iconRightKey": { "type": "string" },
+        "iconRightName": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "dataTable": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "data-table" },
+        "headers": { "type": "array", "items": { "type": "object" } },
+        "rows": { "type": "array", "items": { "type": "object" } },
+        "title": { "type": "string" },
+        "columns": { "type": "array" }
+      },
+      "additionalProperties": true
+    },
+
+    "topStatsCard": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "top-stats-card" }
+      },
+      "additionalProperties": true
+    },
+
+    "filterBar": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "filter-bar" }
+      },
+      "additionalProperties": true
+    },
+
+    "teaserCard": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "teaser-card" }
+      },
+      "additionalProperties": true
+    },
+
+    "sidebarNav": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "sidebar-nav" }
+      },
+      "additionalProperties": true
+    },
+
+    "topHeader": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "top-header" }
+      },
+      "additionalProperties": true
+    },
+
+    "collapsibleSection": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "collapsible-section" }
+      },
+      "additionalProperties": true
+    },
+
+    "statusBadgeSection": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "status-badge" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

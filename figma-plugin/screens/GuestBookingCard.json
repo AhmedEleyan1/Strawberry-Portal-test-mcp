@@ -1,11 +1,33 @@
 {
   "$schema": "./screen-definition.schema.json",
   "meta": {
-    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/ContractDetailsCard.jsx",
-    "generatedAt": "2026-06-07T14:03:28.269Z",
-    "component": "ContractDetailsCard"
+    "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/dashboard/GuestBookingCard.jsx",
+    "generatedAt": "2026-06-07T14:03:28.315Z",
+    "component": "GuestBookingCard"
   },
   "sections": [
+    {
+      "type": "card-heading-with-action",
+      "title": "Accommodation",
+      "icon": "accommodation",
+      "accentLine": true,
+      "accentColor": "#960014",
+      "action": {
+        "label": "Open in Mews",
+        "componentRef": "buttons/primary/small",
+        "properties": {
+          "Label": "Open in Mews",
+          "Icon right": true,
+          "Icon left": false
+        },
+        "iconRef": "icons/arrowOut"
+      }
+    },
+    {
+      "type": "booking-meta",
+      "bookingNumber": "{bookingNumber}",
+      "source": "{source}"
+    },
     {
       "type": "card",
       "layout": "grid-4col",
@@ -14,10 +36,10 @@
           "name": "Column 1",
           "fields": [
             {
-              "label": "Agreement type",
-              "value": "{fields.agreement_type}",
-              "fieldType": "select",
-              "editable": true,
+              "label": "Check in",
+              "value": "{checkIn}",
+              "fieldType": "text",
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
@@ -25,10 +47,10 @@
               "hasAction": false
             },
             {
-              "label": "Contract type",
-              "value": "{fields.contract_type}",
+              "label": "Guest count",
+              "value": "{guestCount}",
               "fieldType": "text",
-              "editable": true,
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
@@ -36,10 +58,10 @@
               "hasAction": false
             },
             {
-              "label": "Number",
-              "value": "{fields.contract_number}",
+              "label": "Room",
+              "value": "{room}",
               "fieldType": "text",
-              "editable": true,
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
@@ -52,10 +74,10 @@
           "name": "Column 2",
           "fields": [
             {
-              "label": "Duration",
-              "value": "{fields.duration}",
+              "label": "Check out",
+              "value": "{checkOut}",
               "fieldType": "text",
-              "editable": true,
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
@@ -63,10 +85,21 @@
               "hasAction": false
             },
             {
-              "label": "Cancellation policy",
-              "value": "{fields.cancellation_policy}",
+              "label": "Room category",
+              "value": "{roomCategory}",
               "fieldType": "text",
-              "editable": true,
+              "editable": false,
+              "hasInfo": false,
+              "infoText": "",
+              "tooltipPosition": "top",
+              "isLink": false,
+              "hasAction": false
+            },
+            {
+              "label": "Rate",
+              "value": "{rate}",
+              "fieldType": "text",
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
@@ -79,9 +112,9 @@
           "name": "Column 3",
           "fields": [
             {
-              "label": "Status",
-              "value": "Status",
-              "fieldType": "badge",
+              "label": "Room status",
+              "value": "{roomStatus}",
+              "fieldType": "text",
               "editable": false,
               "hasInfo": false,
               "infoText": "",
@@ -90,21 +123,10 @@
               "hasAction": false
             },
             {
-              "label": "Loyalty points eligible",
-              "value": "{fields.loyalty_eligible}",
-              "fieldType": "select",
-              "editable": true,
-              "hasInfo": false,
-              "infoText": "",
-              "tooltipPosition": "top",
-              "isLink": false,
-              "hasAction": false
-            },
-            {
-              "label": "Loyalty points benefit eligible",
-              "value": "{fields.loyalty_benefit_eligible}",
-              "fieldType": "select",
-              "editable": true,
+              "label": "Reservation created on",
+              "value": "{reservationCreated}",
+              "fieldType": "text",
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
@@ -117,36 +139,14 @@
           "name": "Column 4",
           "fields": [
             {
-              "label": "Owner",
-              "value": "{fields.owner}",
+              "label": "Products",
+              "value": "{products}",
               "fieldType": "text",
-              "editable": true,
+              "editable": false,
               "hasInfo": false,
               "infoText": "",
               "tooltipPosition": "top",
               "isLink": false,
-              "hasAction": false
-            },
-            {
-              "label": "Commission",
-              "value": "{fields.commission}",
-              "fieldType": "text",
-              "editable": true,
-              "hasInfo": false,
-              "infoText": "",
-              "tooltipPosition": "top",
-              "isLink": false,
-              "hasAction": false
-            },
-            {
-              "label": "Account contract owner",
-              "value": "{fields.account_owner}",
-              "fieldType": "link",
-              "editable": true,
-              "hasInfo": false,
-              "infoText": "",
-              "tooltipPosition": "top",
-              "isLink": true,
               "hasAction": false
             }
           ]

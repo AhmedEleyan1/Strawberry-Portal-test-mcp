@@ -1,7 +1,8 @@
 {
+  "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/company/CalendarPopover.jsx",
-    "generatedAt": "2026-06-07T08:23:27.733Z",
+    "generatedAt": "2026-06-07T14:03:28.289Z",
     "component": "CalendarPopover"
   },
   "sections": []

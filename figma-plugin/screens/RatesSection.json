@@ -1,7 +1,8 @@
 {
+  "$schema": "./screen-definition.schema.json",
   "meta": {
     "source": "/Users/ahmedeleyan/Documents/Archive/PortalMCP/src/components/contract/RatesSection.jsx",
-    "generatedAt": "2026-06-07T08:23:27.722Z",
+    "generatedAt": "2026-06-07T14:03:28.282Z",
     "component": "RatesSection"
   },
   "sections": [

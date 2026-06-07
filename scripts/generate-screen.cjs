@@ -257,6 +257,14 @@ function detectComponentType(ast, source) {
   if (source.includes('more-info-details') || source.includes('<details')) types.push('collapsible-section');
   if (source.includes('sidebar')) types.push('sidebar-nav');
   
+  // Booking card patterns (Enhancement #3)
+  if (source.includes('booking-card')) types.push('booking-card');
+  if (source.includes('booking-card-heading') && source.includes('btn-primary-action')) types.push('card-heading-with-action');
+  if (source.includes('booking-card-accent')) types.push('accent-line');
+  if (source.includes('booking-meta-row')) types.push('booking-meta');
+  if (source.includes('booking-details-grid')) types.push('booking-details-grid');
+  if (source.includes('btn-primary-action') && !source.includes('booking-card-heading')) types.push('primary-action-button');
+  
   return types;
 }
 
@@ -364,6 +372,211 @@ function extractBackLink(ast) {
 }
 
 // ============================================================
+// Booking Card Extractors (Enhancement #3)
+// ============================================================
+
+/** Extract heading-with-action from booking-card-heading + btn-primary-action */
+function extractHeadingWithAction(ast, source) {
+  const section = {
+    type: 'card-heading-with-action',
+    title: 'Accommodation',
+    icon: 'accommodation',
+    accentLine: source.includes('booking-card-accent'),
+    accentColor: '#960014',
+    action: null,
+  };
+
+  // Find heading title from h3 inside booking-card-heading
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      const props = getProps(nodePath.node);
+
+      // h3 with booking-card-heading-title class
+      if (name === 'h3' && props.className && props.className.includes('heading-title')) {
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXText') {
+            const text = child.value.trim();
+            if (text) section.title = text;
+          }
+        }
+      }
+
+      // Find the primary action button (a or button with btn-primary-action class)
+      if ((name === 'a' || name === 'button') && props.className && props.className.includes('btn-primary-action')) {
+        let label = '';
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXText') {
+            const text = child.value.trim();
+            if (text) label = text;
+          }
+        }
+        section.action = {
+          label: label || 'Open in Mews',
+          componentRef: 'buttons/primary/small',
+          properties: {
+            'Label': label || 'Open in Mews',
+            'Icon right': true,
+            'Icon left': false,
+          },
+          iconRef: 'icons/arrowOut',
+        };
+      }
+
+      // Find icon name for heading
+      if (name === 'Icon' && props.className && props.className.includes('heading-icon')) {
+        if (props.name) section.icon = props.name;
+      }
+    }
+  });
+
+  return section;
+}
+
+/** Extract booking-meta from booking-meta-row */
+function extractBookingMeta(ast) {
+  const meta = {
+    type: 'booking-meta',
+    bookingNumber: '',
+    source: '',
+  };
+
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const props = getProps(nodePath.node);
+      if (props.className && props.className.includes('booking-meta-badge')) {
+        // Try to extract the booking number from children
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXText') {
+            const text = child.value.trim();
+            if (text.includes('Booking number')) {
+              meta.bookingNumber = '{bookingNumber}';
+            }
+          }
+          if (child.type === 'JSXExpressionContainer') {
+            meta.bookingNumber = '{bookingNumber}';
+          }
+        }
+      }
+      if (props.className && props.className.includes('booking-meta-source')) {
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXExpressionContainer') {
+            meta.source = '{source}';
+          }
+        }
+      }
+    }
+  });
+
+  return meta;
+}
+
+/** Extract booking details grid as a 4-column card */
+function extractBookingDetailsGrid(ast) {
+  const columns = [];
+  let currentColumn = null;
+
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const props = getProps(nodePath.node);
+
+      // Each booking-details-col is a column
+      if (props.className && props.className.includes('booking-details-col')) {
+        if (currentColumn) columns.push(currentColumn);
+        currentColumn = {
+          name: `Column ${columns.length + 1}`,
+          fields: [],
+        };
+      }
+
+      // Each booking-detail-item contains a label and value
+      if (props.className && props.className.includes('booking-detail-item')) {
+        let label = '';
+        let value = '';
+
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXElement') {
+            const childProps = getProps(child);
+            if (childProps.className && childProps.className.includes('booking-detail-label')) {
+              for (const textChild of child.children) {
+                if (textChild.type === 'JSXText') label = textChild.value.trim();
+              }
+            }
+            if (childProps.className && childProps.className.includes('booking-detail-value')) {
+              for (const textChild of child.children) {
+                if (textChild.type === 'JSXText') value = textChild.value.trim();
+                if (textChild.type === 'JSXExpressionContainer') {
+                  const expr = textChild.expression;
+                  if (expr.type === 'Identifier') value = `{${expr.name}}`;
+                  if (expr.type === 'MemberExpression') value = `{${memberToString(expr)}}`;
+                }
+              }
+            }
+          }
+        }
+
+        if (label && currentColumn) {
+          currentColumn.fields.push({
+            label,
+            value: value || `{${label.toLowerCase().replace(/\s+/g, '_')}}`,
+            fieldType: 'text',
+            editable: false,
+            hasInfo: false,
+            infoText: '',
+            tooltipPosition: 'top',
+            isLink: false,
+            hasAction: false,
+          });
+        }
+      }
+    }
+  });
+
+  // Push last column
+  if (currentColumn) columns.push(currentColumn);
+
+  return {
+    type: 'card',
+    layout: `grid-${Math.min(columns.length, 4)}col`,
+    columns,
+  };
+}
+
+/** Extract standalone primary action button */
+function extractPrimaryAction(ast) {
+  let label = 'Go to booking';
+
+  traverse(ast, {
+    JSXElement(nodePath) {
+      const name = getJSXName(nodePath.node.openingElement.name);
+      const props = getProps(nodePath.node);
+
+      if ((name === 'a' || name === 'button') && props.className && props.className.includes('btn-primary-action')) {
+        for (const child of nodePath.node.children) {
+          if (child.type === 'JSXText') {
+            const text = child.value.trim();
+            if (text) label = text;
+          }
+        }
+        nodePath.stop();
+      }
+    }
+  });
+
+  return {
+    type: 'primary-action-button',
+    label,
+    componentRef: 'buttons/primary/small',
+    properties: {
+      'Label': label,
+      'Icon right': true,
+      'Icon left': false,
+    },
+    iconRef: 'icons/arrowOut',
+  };
+}
+
+// ============================================================
 // Main Generator
 // ============================================================
 
@@ -383,6 +596,7 @@ function generateScreenDefinition(filePath) {
   const fileName = path.basename(filePath, '.jsx');
   
   const definition = {
+    $schema: './screen-definition.schema.json',
     meta: {
       source: filePath,
       generatedAt: new Date().toISOString(),
@@ -391,14 +605,40 @@ function generateScreenDefinition(filePath) {
     sections: [],
   };
   
+  // Detect types
+  const types = detectComponentType(ast, source);
+  
+  // ─── Booking card pattern ───
+  if (types.includes('booking-card')) {
+    // Heading with action
+    if (types.includes('card-heading-with-action')) {
+      definition.sections.push(extractHeadingWithAction(ast, source));
+    }
+    
+    // Booking meta
+    if (types.includes('booking-meta')) {
+      definition.sections.push(extractBookingMeta(ast));
+    }
+    
+    // Booking details grid
+    if (types.includes('booking-details-grid')) {
+      definition.sections.push(extractBookingDetailsGrid(ast));
+    }
+    
+    // Standalone primary action button (not inside heading)
+    if (types.includes('primary-action-button')) {
+      definition.sections.push(extractPrimaryAction(ast));
+    }
+    
+    return definition;
+  }
+  
+  // ─── Standard card patterns (existing) ───
   // Section header
   const sectionTitle = extractSectionHeader(ast);
   if (sectionTitle) {
     definition.sections.push({ type: 'section-header', title: sectionTitle });
   }
-  
-  // Detect types
-  const types = detectComponentType(ast, source);
   
   // Grid card
   if (types.includes('grid-card')) {
@@ -446,6 +686,7 @@ function generateAppDefinition(filePath) {
   const fileName = path.basename(filePath, '.jsx');
   
   const definition = {
+    $schema: './screen-definition.schema.json',
     meta: {
       source: filePath,
       generatedAt: new Date().toISOString(),
@@ -463,6 +704,93 @@ function generateAppDefinition(filePath) {
 }
 
 // ============================================================
+// Lightweight Schema Validator
+// ============================================================
+const VALID_SECTION_TYPES = [
+  'section-header', 'card-heading-with-action', 'card', 'booking-meta',
+  'primary-action-button', 'data-table', 'top-stats-card', 'filter-bar',
+  'teaser-card', 'sidebar-nav', 'top-header', 'collapsible-section', 'status-badge',
+];
+const VALID_FIELD_TYPES = ['text', 'number', 'select', 'badge', 'link', 'date', 'email', 'phone', 'currency'];
+const VALID_TOOLTIP_POSITIONS = ['top', 'right', 'bottom', 'left'];
+
+function validateAgainstSchema(data, schema) {
+  const errors = [];
+
+  // meta check
+  if (!data.meta) {
+    errors.push('Missing required property: meta');
+  } else {
+    if (!data.meta.source) errors.push('meta.source is required');
+    if (!data.meta.component) errors.push('meta.component is required');
+  }
+
+  // sections check
+  if (!data.sections) {
+    errors.push('Missing required property: sections');
+  } else if (!Array.isArray(data.sections)) {
+    errors.push('sections must be an array');
+  } else if (data.sections.length === 0) {
+    errors.push('sections must have at least 1 item');
+  } else {
+    data.sections.forEach((sec, i) => {
+      if (!sec.type) {
+        errors.push(`sections[${i}]: missing required property 'type'`);
+      } else if (!VALID_SECTION_TYPES.includes(sec.type)) {
+        errors.push(`sections[${i}]: unknown type '${sec.type}'`);
+      }
+
+      // Type-specific validation
+      if (sec.type === 'section-header' && !sec.title) {
+        errors.push(`sections[${i}] (section-header): missing 'title'`);
+      }
+      if (sec.type === 'card-heading-with-action' && !sec.title) {
+        errors.push(`sections[${i}] (card-heading-with-action): missing 'title'`);
+      }
+      if (sec.type === 'booking-meta' && !sec.bookingNumber) {
+        errors.push(`sections[${i}] (booking-meta): missing 'bookingNumber'`);
+      }
+      if (sec.type === 'primary-action-button' && !sec.label) {
+        errors.push(`sections[${i}] (primary-action-button): missing 'label'`);
+      }
+
+      // Card columns/fields validation
+      if (sec.type === 'card') {
+        if (!sec.layout) errors.push(`sections[${i}] (card): missing 'layout'`);
+        if (!sec.columns || !Array.isArray(sec.columns)) {
+          errors.push(`sections[${i}] (card): missing or invalid 'columns'`);
+        } else {
+          sec.columns.forEach((col, j) => {
+            if (!col.name) errors.push(`sections[${i}].columns[${j}]: missing 'name'`);
+            if (!col.fields || !Array.isArray(col.fields)) {
+              errors.push(`sections[${i}].columns[${j}]: missing or invalid 'fields'`);
+            } else {
+              col.fields.forEach((field, k) => {
+                if (!field.label) errors.push(`sections[${i}].columns[${j}].fields[${k}]: missing 'label'`);
+                if (field.value === undefined) errors.push(`sections[${i}].columns[${j}].fields[${k}]: missing 'value'`);
+                if (field.fieldType && !VALID_FIELD_TYPES.includes(field.fieldType)) {
+                  errors.push(`sections[${i}].columns[${j}].fields[${k}]: invalid fieldType '${field.fieldType}'`);
+                }
+                if (field.tooltipPosition && !VALID_TOOLTIP_POSITIONS.includes(field.tooltipPosition)) {
+                  errors.push(`sections[${i}].columns[${j}].fields[${k}]: invalid tooltipPosition '${field.tooltipPosition}'`);
+                }
+              });
+            }
+          });
+        }
+      }
+
+      // Validate action button refs
+      if (sec.action) {
+        if (!sec.action.label) errors.push(`sections[${i}].action: missing 'label'`);
+      }
+    });
+  }
+
+  return errors;
+}
+
+// ============================================================
 // CLI
 // ============================================================
 function main() {
@@ -476,6 +804,7 @@ Usage:
   node scripts/generate-screen.cjs <file.jsx>     Generate for a single component
   node scripts/generate-screen.cjs --all           Generate for all components
   node scripts/generate-screen.cjs --page <App>    Generate full page definition
+  node scripts/generate-screen.cjs --validate      Validate all JSONs against schema
 
 Output is written to figma-plugin/screens/<ComponentName>.json
     `);
@@ -485,6 +814,43 @@ Output is written to figma-plugin/screens/<ComponentName>.json
   const outputDir = path.resolve(__dirname, '../figma-plugin/screens');
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  if (args[0] === '--validate') {
+    const screensDir = path.resolve(__dirname, '../figma-plugin/screens');
+    const schemaPath = path.join(screensDir, 'screen-definition.schema.json');
+    
+    if (!fs.existsSync(schemaPath)) {
+      console.error('❌ Schema file not found:', schemaPath);
+      process.exit(1);
+    }
+    
+    const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+    const files = fs.readdirSync(screensDir).filter(f => f.endsWith('.json') && !f.includes('schema'));
+    let passed = 0;
+    let failed = 0;
+    
+    for (const file of files) {
+      const filePath = path.join(screensDir, file);
+      try {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        const errors = validateAgainstSchema(data, schema);
+        if (errors.length === 0) {
+          console.log(`✅ ${file}`);
+          passed++;
+        } else {
+          console.log(`❌ ${file}:`);
+          for (const err of errors) console.log(`   ${err}`);
+          failed++;
+        }
+      } catch (err) {
+        console.log(`❌ ${file}: Parse error — ${err.message}`);
+        failed++;
+      }
+    }
+    
+    console.log(`\nValidation: ${passed} passed, ${failed} failed, ${files.length} total`);
+    process.exit(failed > 0 ? 1 : 0);
   }
 
   if (args[0] === '--all') {

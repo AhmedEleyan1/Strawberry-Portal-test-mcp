@@ -329,6 +329,45 @@ var COMPONENT_KEYS = {
   wrong: "af474e55faf2cbc67d57872595eb7e9273934d21"
 };
 
+// ============================================================
+// Named Component Registry
+// Maps human-readable paths to Figma component keys.
+// Usage in JSON: "componentRef": "buttons/primary/small"
+// ============================================================
+var COMPONENT_REGISTRY = {
+  "buttons/primary/small":  "310bcca2715e0b81e21cd58fc67af44339c8c847",
+  "buttons/secondary/small": "094db23ddfe841a00636bf2b03dc828d37dec762",
+  "buttons/link/small":     "c2c80910b7ac372457a46ca787d25449a83ec308",
+  "buttons/link/medium":    "aacea6f05d7f25db1672cf4a0d3dbead1f1bf119",
+  "icons/arrowOut":         "6a8b08631d23d998659f26baea327d926eab8c03",
+  "icons/arrowDown":        "8c4ad3c79e078ccef0ef29ddc9867569cee14544",
+  "icons/arrowLeft":        "9ad9f3db0beebc8878f43cb6c098c13d9117bc7e",
+  "icons/arrowRight":       "2f36f5fcd8c0dec85bb271b7fb55cb8d55ac63c8",
+  "icons/arrowUp":          "2f0041e1ba23729cc61404681adcdb136a39919d",
+  "icons/chevronDown":      "1724cadae6626d0d78ccbd84b0ee98b9c59e71f6",
+  "icons/chevronLeft":      "cafe9b417b8dd036ec99f1d331735f6d3baf124c",
+  "icons/chevronRight":     "0e6e35a3b62d8ba873a5490440e5a09dd3a1336c",
+  "icons/accommodation":    "2a05cf3bfe29d3b2fd5c52d533ad6cea5d5a1f61",
+  "cardHeading":            "62311d193bef1cb4a08dae085bf58ef2ee704f4e"
+};
+
+/**
+ * Resolve a component reference to a Figma key.
+ * Accepts:
+ *   - Named ref: "buttons/primary/small" → looks up COMPONENT_REGISTRY
+ *   - COMPONENT_KEYS name: "arrowsArrowOut" → looks up COMPONENT_KEYS
+ *   - Raw hash: "310bcca27..." → returns as-is
+ */
+function resolveComponentKey(ref) {
+  if (!ref) return null;
+  // 1. Named registry path
+  if (COMPONENT_REGISTRY[ref]) return COMPONENT_REGISTRY[ref];
+  // 2. Legacy COMPONENT_KEYS name
+  if (COMPONENT_KEYS[ref]) return COMPONENT_KEYS[ref];
+  // 3. Assume raw hash
+  return ref;
+}
+
 var COLOR_VARS = {};
 var TEXT_STYLE_MAP = {};
 var bodyFont = "Inter";
@@ -552,6 +591,233 @@ async function buildField(fieldDef) {
   return field;
 }
 
+// ============================================================
+// Build: Card Heading with Action Button + Accent Line (Option 8)
+// Heading row: [icon + title] ... [Primary button]
+// Then a 3px red accent line below
+// ============================================================
+async function buildCardHeadingWithAction(section) {
+  var wrapper = figma.createFrame();
+  wrapper.name = "Card Heading + Action";
+  wrapper.layoutMode = "VERTICAL";
+  wrapper.primaryAxisSizingMode = "AUTO";
+  wrapper.counterAxisSizingMode = "FIXED";
+  wrapper.resize(TOKENS.layout.contentWidth, 60);
+  wrapper.fills = [];
+  wrapper.itemSpacing = 0;
+
+  // Heading row
+  var row = figma.createFrame();
+  row.name = "heading-row";
+  row.layoutMode = "HORIZONTAL";
+  row.primaryAxisSizingMode = "FIXED";
+  row.counterAxisSizingMode = "AUTO";
+  row.resize(TOKENS.layout.contentWidth, 48);
+  row.paddingLeft = row.paddingRight = 24;
+  row.paddingTop = row.paddingBottom = 12;
+  row.fills = solidFill(TOKENS.colors.varmGrey, "varmGrey");
+  row.primaryAxisAlignItems = "SPACE_BETWEEN";
+  row.counterAxisAlignItems = "CENTER";
+  row.cornerRadius = TOKENS.layout.cardRadius;
+
+  // Left side: icon + title
+  var leftGroup = figma.createFrame();
+  leftGroup.name = "heading-left";
+  leftGroup.layoutMode = "HORIZONTAL";
+  leftGroup.itemSpacing = 10;
+  leftGroup.primaryAxisSizingMode = "AUTO";
+  leftGroup.counterAxisSizingMode = "AUTO";
+  leftGroup.fills = [];
+  leftGroup.counterAxisAlignItems = "CENTER";
+
+  // Try to add the accommodation icon
+  if (section.icon) {
+    var iconKey = resolveComponentKey("icons/" + section.icon) || COMPONENT_KEYS["typeAccommodation"] || COMPONENT_KEYS[section.icon];
+    if (iconKey) {
+      try {
+        var iconComp = await figma.importComponentByKeyAsync(iconKey);
+        var iconInst = iconComp.createInstance();
+        iconInst.name = "heading-icon";
+        iconInst.resize(20, 20);
+        leftGroup.appendChild(iconInst);
+      } catch (e) { /* icon import failed */ }
+    }
+  }
+
+  var titleText = await buildText(section.title || "Accommodation", 16, "SemiBold", TOKENS.colors.textPrimary, "textPrimary", "heading");
+  titleText.name = "heading-title";
+  leftGroup.appendChild(titleText);
+  row.appendChild(leftGroup);
+
+  // Right side: Primary action button from design system
+  if (section.action) {
+    var actionBtn = await buildPrimaryActionButton(section.action);
+    row.appendChild(actionBtn);
+  }
+
+  wrapper.appendChild(row);
+
+  // Accent line (3px red strip)
+  if (section.accentLine) {
+    var accent = figma.createFrame();
+    accent.name = "accent-line";
+    accent.layoutMode = "NONE";
+    accent.resize(TOKENS.layout.contentWidth, 3);
+    var accentColor = section.accentColor ? hexToRgb(section.accentColor.replace("#", "")) : hexToRgb("960014");
+    accent.fills = [{ type: "SOLID", color: accentColor, opacity: 1 }];
+    wrapper.appendChild(accent);
+    accent.layoutSizingHorizontal = "FILL";
+  }
+
+  return wrapper;
+}
+
+// ============================================================
+// Build: Primary Action Button (Go to booking, Book table, etc.)
+// Uses actual Figma design system Buttons component.
+// ============================================================
+async function buildPrimaryActionButton(section) {
+  var wrapper = figma.createFrame();
+  wrapper.name = "Primary Action CTA";
+  wrapper.layoutMode = "HORIZONTAL";
+  wrapper.primaryAxisSizingMode = "AUTO";
+  wrapper.counterAxisSizingMode = "AUTO";
+  wrapper.fills = [];
+  wrapper.paddingLeft = wrapper.paddingRight = 0;
+  wrapper.paddingTop = 8;
+  wrapper.paddingBottom = 0;
+
+  // Resolve component key — supports "buttons/primary/small" refs or raw hashes
+  var componentKey = resolveComponentKey(section.componentRef || section.componentKey) || COMPONENT_KEYS.buttons;
+
+  try {
+    var btnComp = await figma.importComponentByKeyAsync(componentKey);
+    var btnInstance = btnComp.createInstance();
+    btnInstance.name = section.label || "Go to booking";
+
+    // Set component properties using the actual property IDs
+    // Figma property names include internal IDs like "Label#1234:0"
+    if (section.properties) {
+      try {
+        var compProps = btnInstance.componentProperties;
+        var propsToSet = {};
+        for (var propKey in compProps) {
+          // Match by the display name (before the # separator)
+          var displayName = propKey.split("#")[0];
+          if (displayName === "Label" && section.properties.Label) {
+            propsToSet[propKey] = section.properties.Label;
+          }
+          if (displayName === "Icon right" && section.properties["Icon right"] !== undefined) {
+            propsToSet[propKey] = section.properties["Icon right"];
+          }
+          if (displayName === "Icon left" && section.properties["Icon left"] !== undefined) {
+            propsToSet[propKey] = section.properties["Icon left"];
+          }
+        }
+        if (Object.keys(propsToSet).length > 0) {
+          btnInstance.setProperties(propsToSet);
+        }
+      } catch (e) {
+        // Fallback: directly find and update the text node
+        var textNode = btnInstance.findOne(function(node) {
+          return node.type === "TEXT";
+        });
+        if (textNode) {
+          await loadFonts();
+          textNode.characters = section.properties.Label || section.label || "Go to booking";
+        }
+      }
+    }
+
+    // If Icon right is enabled and we have an icon key, try to swap the icon instance
+    var iconKey = resolveComponentKey(section.iconRef || section.iconRightKey);
+    if (iconKey) {
+      try {
+        var iconComp = await figma.importComponentByKeyAsync(iconKey);
+        // Find the icon slot inside the button instance
+        var iconSlot = btnInstance.findOne(function(node) {
+          return node.type === "INSTANCE" && (
+            node.name.toLowerCase().includes("icon") ||
+            node.name.toLowerCase().includes("arrow") ||
+            node.name.toLowerCase().includes("right")
+          );
+        });
+        if (iconSlot && iconSlot.type === "INSTANCE") {
+          iconSlot.swapComponent(iconComp);
+        }
+      } catch (e) { /* icon swap failed, keep default */ }
+    }
+
+    wrapper.appendChild(btnInstance);
+  } catch (e) {
+    // Fallback: build a manual primary button if component import fails
+    var btn = figma.createFrame();
+    btn.name = section.label || "Go to booking";
+    btn.layoutMode = "HORIZONTAL";
+    btn.itemSpacing = 4;
+    btn.primaryAxisSizingMode = "AUTO";
+    btn.counterAxisSizingMode = "AUTO";
+    btn.paddingTop = btn.paddingBottom = 4;
+    btn.paddingLeft = btn.paddingRight = 8;
+    btn.cornerRadius = 8;
+    btn.fills = [{ type: "SOLID", color: hexToRgb("960014"), opacity: 1 }];
+    btn.primaryAxisAlignItems = "CENTER";
+    btn.counterAxisAlignItems = "CENTER";
+
+    var label = await buildText(section.label || "Go to booking", 14, "SemiBold", { r: 1, g: 1, b: 1 }, null, "body");
+    label.name = "btn-label";
+    btn.appendChild(label);
+
+    wrapper.appendChild(btn);
+  }
+
+  return wrapper;
+}
+
+// ============================================================
+// Build: Booking Meta Row (booking number + source)
+// ============================================================
+async function buildBookingMeta(section) {
+  var row = figma.createFrame();
+  row.name = "Booking Meta";
+  row.layoutMode = "HORIZONTAL";
+  row.itemSpacing = 12;
+  row.primaryAxisSizingMode = "AUTO";
+  row.counterAxisSizingMode = "AUTO";
+  row.fills = [];
+  row.counterAxisAlignItems = "CENTER";
+
+  // Booking number badge
+  var badge = figma.createFrame();
+  badge.name = "booking-number-badge";
+  badge.layoutMode = "HORIZONTAL";
+  badge.primaryAxisSizingMode = "AUTO";
+  badge.counterAxisSizingMode = "AUTO";
+  badge.paddingTop = badge.paddingBottom = 4;
+  badge.paddingLeft = badge.paddingRight = 12;
+  badge.cornerRadius = 24;
+  badge.fills = solidFill(TOKENS.colors.cardBg, "cardBg");
+  badge.strokes = [{ type: "SOLID", color: TOKENS.colors.borderLight, opacity: 1 }];
+  badge.strokeWeight = 1;
+
+  var numText = await buildText("Booking number: " + (section.bookingNumber || "–"), 12, "Medium", TOKENS.colors.textPrimary, "textPrimary", "label");
+  numText.name = "booking-number";
+  badge.appendChild(numText);
+  row.appendChild(badge);
+
+  // Separator
+  var sep = await buildText("|", 14, "Regular", TOKENS.colors.borderMedium, "borderMedium", "body");
+  sep.name = "separator";
+  row.appendChild(sep);
+
+  // Source label
+  var sourceText = await buildText(section.source || "App", 14, "Regular", TOKENS.colors.textSecondary, "textSecondary", "body");
+  sourceText.name = "booking-source";
+  row.appendChild(sourceText);
+
+  return row;
+}
+
 async function buildGridCard(section) {
   var card = figma.createFrame();
   card.name = "Card";
@@ -594,6 +860,13 @@ async function buildGridCard(section) {
   }
 
   card.appendChild(grid);
+
+  // Render action button inside the card if defined
+  if (section.action && section.action.type === "primary-action-button") {
+    var actionBtn = await buildPrimaryActionButton(section.action);
+    card.appendChild(actionBtn);
+  }
+
   return card;
 }
 
@@ -1189,6 +1462,11 @@ async function buildScreen(definition) {
       root.appendChild(header);
     }
 
+    if (sec.type === "card-heading-with-action") {
+      var headingAction = await buildCardHeadingWithAction(sec);
+      root.appendChild(headingAction);
+    }
+
     if (sec.type === "card" && sec.layout === "grid-4col") {
       var card = await buildGridCard(sec);
       root.appendChild(card);
@@ -1232,6 +1510,16 @@ async function buildScreen(definition) {
     if (sec.type === "collapsible-section") {
       var collapsible = await buildCollapsibleSection(sec);
       root.appendChild(collapsible);
+    }
+
+    if (sec.type === "primary-action-button") {
+      var actionBtn = await buildPrimaryActionButton(sec);
+      root.appendChild(actionBtn);
+    }
+
+    if (sec.type === "booking-meta") {
+      var meta = await buildBookingMeta(sec);
+      root.appendChild(meta);
     }
   }
 
